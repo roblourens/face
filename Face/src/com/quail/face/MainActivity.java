@@ -1,9 +1,11 @@
 package com.quail.face;
 
-import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 
-public class MainActivity extends Activity
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+
+public class MainActivity extends SherlockFragmentActivity
 {
     /** Called when the activity is first created. */
     @Override
@@ -11,5 +13,7 @@ public class MainActivity extends Activity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        
+        startActivity(new Intent(this, TakeActivity.class));
     }
 }
