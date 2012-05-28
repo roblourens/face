@@ -1,3 +1,6 @@
 [submodule "android-ffmpeg-x264"]
 	path = android-ffmpeg-x264
 	url = https://github.com/andynicholson/android-ffmpeg-x264.git
+[submodule "ABS"]
+	path = ABS
+	url = https://github.com/JakeWharton/ActionBarSherlock.git
