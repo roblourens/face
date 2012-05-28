@@ -18,7 +18,7 @@ public class TakeActivity extends SherlockFragmentActivity
 
         cameraPreview = (CameraPreview) findViewById(R.id.cameraPreview);
         ((Button) findViewById(R.id.takeButton))
-                .setOnClickListener(new ShutterHandler(cameraPreview
+                .setOnClickListener(new ShutterHandler(this, cameraPreview
                         .getCamera()));
     }
     /*

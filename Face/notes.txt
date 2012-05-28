@@ -1,0 +1,8 @@
+Image storage:
+If SD card is present:
+    If user selected option to put files in the gallery:
+        <ext_storage>/Pictures/face/
+    Else:
+        <ext_storage>/com.quail.face/images
+Else:
+    <internal_private_storage>/images

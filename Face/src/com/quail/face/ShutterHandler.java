@@ -1,5 +1,6 @@
 package com.quail.face;
 
+import android.app.Activity;
 import android.hardware.Camera;
 import android.util.Log;
 import android.view.View;
@@ -8,11 +9,13 @@ import android.view.View.OnClickListener;
 public class ShutterHandler implements OnClickListener, Camera.ShutterCallback,
         Camera.PictureCallback
 {
+    private Activity a;
     private Camera camera;
 
-    public ShutterHandler(Camera c)
+    public ShutterHandler(Activity a, Camera cam)
     {
-        this.camera = c;
+        this.a = a;
+        this.camera = cam;
     }
 
     @Override
@@ -32,6 +35,8 @@ public class ShutterHandler implements OnClickListener, Camera.ShutterCallback,
     {
         log("onPictureTaken");
         camera.startPreview();
+        
+        ((FaceApplication) a.getApplication()).getImageFM().saveImage(data);
     }
     
     private void log(String msg)

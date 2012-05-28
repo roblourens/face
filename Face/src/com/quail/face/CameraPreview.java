@@ -28,6 +28,7 @@ class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         init();
     }
 
+    @SuppressWarnings("deprecation") // setType really is apparently needed
     private void init()
     {
         holder = getHolder();
