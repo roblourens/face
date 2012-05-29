@@ -5,4 +5,7 @@ If SD card is present:
     Else:
         <ext_storage>/com.quail.face/images
 Else:
-    <internal_private_storage>/images
+    fail
+    
+    
+Image display: how about horizontally scrolling rows by month?

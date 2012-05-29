@@ -6,7 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
@@ -25,6 +25,7 @@ public class ImageFileManager
     public ImageFileManager(Context c)
     {
         this.c = c;
+
         File picturesDir = Environment
                 .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         File extGalleryPathFile = new File(picturesDir, "face/");
@@ -55,6 +56,18 @@ public class ImageFileManager
     }
 
     /**
+     * Checks the mounting state of the SD card
+     * 
+     * @return True if the card can be written to and read from. False
+     *         otherwise.
+     */
+    public boolean sdCardIsAvailable()
+    {
+        String state = Environment.getExternalStorageState();
+        return Environment.MEDIA_MOUNTED.equals(state);
+    }
+
+    /**
      * Checks all image storage locations, regardless of preferences
      * 
      * @return A list of absolute paths to all found images
@@ -65,14 +78,23 @@ public class ImageFileManager
 
         // find images in external storage, in the gallery
         File extNonGalleryDir = new File(extNonGalleryPath);
-        imgPaths.addAll(Arrays.asList(extNonGalleryDir.list()));
+        for (File f : extNonGalleryDir.listFiles())
+            imgPaths.add(f.getAbsolutePath());
 
         // find images in external storage, not in the gallery
         File extGalleryDir = new File(extGalleryPath);
-        imgPaths.addAll(Arrays.asList(extGalleryDir.list()));
+        for (File f : extGalleryDir.listFiles())
+            imgPaths.add(f.getAbsolutePath());
 
-        // find images in private internal storage
-        imgPaths.addAll(Arrays.asList(c.fileList()));
+        // remove paths that are not jpgs
+        Iterator<String> it = imgPaths.iterator();
+        while (it.hasNext())
+        {
+            String path = it.next();
+            if (!path.toLowerCase().endsWith(".jpg")
+                    && !path.toLowerCase().endsWith(".jpeg"))
+                it.remove();
+        }
 
         return imgPaths;
     }
@@ -82,8 +104,6 @@ public class ImageFileManager
         // TODO prefs
         if (saveImageToExternalStorageNonGallery(data))
             log("Saved to external storage, non gallery");
-        else if (saveImageToInternalStorage(data))
-            log("Saved to internal storage");
         else
             return false;
 
@@ -128,9 +148,7 @@ public class ImageFileManager
 
     private File saveToExternalTmpFile(byte[] data)
     {
-        String state = Environment.getExternalStorageState();
-
-        if (Environment.MEDIA_MOUNTED.equals(state))
+        if (sdCardIsAvailable())
         {
             // We can read and write the media
             String randomName = new Random().nextInt() + "_"
@@ -172,39 +190,6 @@ public class ImageFileManager
         else
             // external storage can't be written to
             return null;
-    }
-
-    private boolean saveImageToInternalStorage(byte[] data)
-    {
-        OutputStream outStream;
-        try
-        {
-            outStream = c.openFileOutput("images/" + newImageFileName(),
-                    Context.MODE_PRIVATE);
-            outStream.write(data);
-        }
-        catch (FileNotFoundException e)
-        {
-            e.printStackTrace();
-            return false;
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-            return false;
-        }
-
-        try
-        {
-            outStream.close();
-        }
-        catch (IOException e)
-        {
-            // file has been written, ignore this
-            e.printStackTrace();
-        }
-
-        return true;
     }
 
     private String newImageFileName()

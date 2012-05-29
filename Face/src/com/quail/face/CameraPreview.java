@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.content.Context;
 import android.hardware.Camera;
+import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Size;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -15,6 +16,7 @@ class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 {
     private SurfaceHolder holder;
     private Camera camera;
+    private int camId;
 
     CameraPreview(Context context)
     {
@@ -114,11 +116,20 @@ class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     {
         Camera.Parameters parameters = camera.getParameters();
 
+        // Set preview size
         List<Size> supportedSizes = parameters.getSupportedPreviewSizes();
         Size optimalSize = getOptimalPreviewSize(supportedSizes, w, h);
         log("Using preview size: " + optimalSize.width + ", "
                 + optimalSize.height);
         parameters.setPreviewSize(optimalSize.width, optimalSize.height);
+        
+        // Set orientation
+        CameraInfo info = new CameraInfo();
+        Camera.getCameraInfo(camId, info);
+        log("Cam orientation: " + info.orientation);
+
+        // force portrait orientation
+        parameters.setRotation(info.orientation);
 
         camera.setParameters(parameters);
         camera.setDisplayOrientation(90);
@@ -134,7 +145,10 @@ class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             Camera.CameraInfo info = new Camera.CameraInfo();
             Camera.getCameraInfo(camId, info);
             if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT)
+            {
+                this.camId = camId;
                 return Camera.open(camId);
+            }
         }
 
         return Camera.open();

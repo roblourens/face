@@ -784,6 +784,7 @@ containing a value of this type.
         public static final int abs__tab_selected_pressed_holo=0x7f020053;
         public static final int abs__tab_unselected_pressed_holo=0x7f020054;
         public static final int ic_launcher=0x7f020055;
+        public static final int ic_refresh=0x7f020056;
     }
     public static final class id {
         public static final int abs__action_bar=0x7f040022;
@@ -815,17 +816,22 @@ containing a value of this type.
         public static final int abs__title=0x7f04001b;
         public static final int abs__titleDivider=0x7f04001c;
         public static final int abs__up=0x7f04000b;
-        public static final int cameraPreview=0x7f040027;
+        public static final int cameraPreview=0x7f040029;
         public static final int disableHome=0x7f040009;
         public static final int homeAsUp=0x7f040006;
         public static final int listMode=0x7f040002;
+        public static final int menu_add_person=0x7f04002d;
+        public static final int menu_prefs=0x7f04002c;
+        public static final int menu_refresh=0x7f04002e;
         public static final int normal=0x7f040001;
-        public static final int overlayLayout=0x7f040028;
+        public static final int overlayLayout=0x7f04002a;
+        public static final int pictureGridView=0x7f040028;
         public static final int showCustom=0x7f040008;
         public static final int showHome=0x7f040005;
         public static final int showTitle=0x7f040007;
         public static final int tabMode=0x7f040003;
-        public static final int takeButton=0x7f040029;
+        public static final int takeButton=0x7f04002b;
+        public static final int takePictureButton=0x7f040027;
         public static final int useLogo=0x7f040004;
         public static final int wrap_content=0x7f040000;
     }
@@ -857,6 +863,9 @@ containing a value of this type.
         public static final int sherlock_spinner_dropdown_item=0x7f030015;
         public static final int sherlock_spinner_item=0x7f030016;
         public static final int take=0x7f030017;
+    }
+    public static final class menu {
+        public static final int main_menu=0x7f0b0000;
     }
     public static final class string {
         /**  Content description for the action bar "home" affordance. [CHAR LIMIT=NONE] 
