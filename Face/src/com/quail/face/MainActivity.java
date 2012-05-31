@@ -6,7 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.Gallery;
+import android.widget.GridView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockActivity;
@@ -26,9 +26,9 @@ public class MainActivity extends SherlockActivity
         setContentView(R.layout.main);
 
         adapter = new ImageAdapter(this);
-        Gallery g = (Gallery) findViewById(R.id.gallery);
-        g.setAdapter(adapter);
-
+        GridView gv = (GridView) findViewById(R.id.gridView);
+        gv.setAdapter(adapter);
+        
         // Set button to launch TakeActivity
         ((Button) findViewById(R.id.takePictureButton))
                 .setOnClickListener(new OnClickListener()

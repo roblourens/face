@@ -12,10 +12,16 @@
         android:text="Take picture"
         android:textSize="25dp" />
 
-    <Gallery
-        android:id="@+id/gallery"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:spacing="10dp" />
+    <GridView
+        android:id="@+id/gridView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="0dp"
+        android:gravity="center"
+        android:horizontalSpacing="6dp"
+        android:numColumns="4"
+        android:padding="0dp"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="6dp" />
 
 </LinearLayout>
