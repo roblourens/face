@@ -18,12 +18,10 @@ import android.widget.ImageView;
 
 public class ImageAdapter extends BaseAdapter
 {
-    private Activity a;
     private List<String> imagePaths = new ArrayList<String>();
 
-    public ImageAdapter(Activity a)
+    public ImageAdapter()
     {
-        this.a = a;
         refresh();
     }
 
@@ -58,12 +56,16 @@ public class ImageAdapter extends BaseAdapter
         if (convertView != null && convertView instanceof ImageView)
             gridImage = (ImageView) convertView;
         else
-            gridImage = new ImageView(a);
+            gridImage = new ImageView(parent.getContext());
 
-        gridImage.setLayoutParams(new Gallery.LayoutParams(150, 150));
-        gridImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        gridImage
+                .setLayoutParams(new HorizontalListView.LayoutParams(150, 150));
+        gridImage.setScaleType(ImageView.ScaleType.FIT_START);
+        gridImage.setAdjustViewBounds(true);
+        gridImage.setPadding(10, 10, 10, 10);
 
         Bitmap bm = BitmapFactory.decodeFile(imagePaths.get(position));
+        // bm = Bitmap.createScaledBitmap(bm, 150, 150, true);
         gridImage.setImageBitmap(bm);
 
         return gridImage;
@@ -79,8 +81,7 @@ public class ImageAdapter extends BaseAdapter
         @Override
         protected Void doInBackground(Void... params)
         {
-            imagePaths = ((FaceApplication) a.getApplication()).getImageFM()
-                    .getImagePaths();
+            imagePaths = ImageFileManager.getIFM().getImagePaths();
             log("Refreshed and found " + imagePaths.size() + " images");
 
             // Sort them backwards (new/large numbers -> old/small numbers)

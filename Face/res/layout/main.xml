@@ -12,10 +12,10 @@
         android:text="Take picture"
         android:textSize="25dp" />
 
-    <Gallery
-        android:id="@+id/gallery"
+    <ListView
+        android:id="@+id/imageList"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:spacing="10dp" />
+        android:layout_height="fill_parent" >
+    </ListView>
 
 </LinearLayout>

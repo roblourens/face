@@ -16,13 +16,30 @@ import android.util.Log;
 
 public class ImageFileManager
 {
-    private final String extGalleryPath;
-    private final String extNonGalleryPath;
-    private final String extTmpPath;
+    private String extGalleryPath;
+    private String extNonGalleryPath;
+    private String extTmpPath;
 
     private Context c;
+    
+    private static ImageFileManager instance = null;
+    public static ImageFileManager getIFM()
+    {
+        return instance;
+    }
+    
+    // Must be called before getIFM, probably from Application.onCreate
+    public static ImageFileManager init(Context c)
+    {
+        if (instance == null)
+        {
+            instance = new ImageFileManager(c);
+        }
+        
+        return instance;
+    }
 
-    public ImageFileManager(Context c)
+    private ImageFileManager(Context c)
     {
         this.c = c;
 

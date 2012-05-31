@@ -5,8 +5,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.Gallery;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockActivity;
@@ -16,7 +17,7 @@ import com.actionbarsherlock.view.MenuItem;
 
 public class MainActivity extends SherlockActivity
 {
-    private ImageAdapter adapter;
+    private BaseAdapter adapter;
 
     /** Called when the activity is first created. */
     @Override
@@ -24,10 +25,6 @@ public class MainActivity extends SherlockActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-
-        adapter = new ImageAdapter(this);
-        Gallery g = (Gallery) findViewById(R.id.gallery);
-        g.setAdapter(adapter);
 
         // Set button to launch TakeActivity
         ((Button) findViewById(R.id.takePictureButton))
@@ -40,6 +37,10 @@ public class MainActivity extends SherlockActivity
                                 TakeActivity.class));
                     }
                 });
+
+        adapter = new RowsAdapter();
+        ListView lv = (ListView) findViewById(R.id.imageList);
+        lv.setAdapter(adapter);
     }
 
     @Override
@@ -74,7 +75,7 @@ public class MainActivity extends SherlockActivity
     {
         if (sdCardCheck())
         {
-            adapter.refresh();
+            //adapter.refresh();
         }
     }
 
@@ -92,7 +93,7 @@ public class MainActivity extends SherlockActivity
     {
         return (FaceApplication) getApplication();
     }
-    
+
     private void log(String msg)
     {
         Log.d("MainActivity", msg);

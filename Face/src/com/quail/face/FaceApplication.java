@@ -13,7 +13,7 @@ public class FaceApplication extends Application
         super.onCreate();
         log("onCreate");
         
-        imageFM = new ImageFileManager(this);
+        imageFM = ImageFileManager.init(this);
     }
 
     public ImageFileManager getImageFM()
@@ -23,6 +23,6 @@ public class FaceApplication extends Application
 
     private void log(String msg)
     {
-        Log.d(getClass().toString(), msg);
+        Log.d("FaceApplication", msg);
     }
 }

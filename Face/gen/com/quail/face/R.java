@@ -818,8 +818,8 @@ containing a value of this type.
         public static final int abs__up=0x7f04000b;
         public static final int cameraPreview=0x7f040029;
         public static final int disableHome=0x7f040009;
-        public static final int gallery=0x7f040028;
         public static final int homeAsUp=0x7f040006;
+        public static final int imageList=0x7f040028;
         public static final int listMode=0x7f040002;
         public static final int menu_add_person=0x7f04002d;
         public static final int menu_prefs=0x7f04002c;
@@ -859,10 +859,11 @@ containing a value of this type.
         public static final int abs__screen_action_bar_overlay=0x7f030011;
         public static final int abs__screen_simple=0x7f030012;
         public static final int abs__screen_simple_overlay_action_mode=0x7f030013;
-        public static final int main=0x7f030014;
-        public static final int sherlock_spinner_dropdown_item=0x7f030015;
-        public static final int sherlock_spinner_item=0x7f030016;
-        public static final int take=0x7f030017;
+        public static final int horizontal_list_row=0x7f030014;
+        public static final int main=0x7f030015;
+        public static final int sherlock_spinner_dropdown_item=0x7f030016;
+        public static final int sherlock_spinner_item=0x7f030017;
+        public static final int take=0x7f030018;
     }
     public static final class menu {
         public static final int main_menu=0x7f0b0000;
