@@ -3,9 +3,6 @@ package com.quail.face;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.GridView;
 import android.widget.Toast;
 
@@ -28,18 +25,6 @@ public class MainActivity extends SherlockActivity
         adapter = new ImageAdapter(this);
         GridView gv = (GridView) findViewById(R.id.gridView);
         gv.setAdapter(adapter);
-        
-        // Set button to launch TakeActivity
-        ((Button) findViewById(R.id.takePictureButton))
-                .setOnClickListener(new OnClickListener()
-                {
-                    @Override
-                    public void onClick(View v)
-                    {
-                        startActivity(new Intent(MainActivity.this,
-                                TakeActivity.class));
-                    }
-                });
     }
 
     @Override
@@ -61,9 +46,9 @@ public class MainActivity extends SherlockActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
-        if (item.getItemId() == R.id.menu_refresh)
+        if (item.getItemId() == R.id.menu_camera)
         {
-            refresh();
+            startActivity(new Intent(this, TakeActivity.class));
             return true;
         }
 
@@ -92,7 +77,7 @@ public class MainActivity extends SherlockActivity
     {
         return (FaceApplication) getApplication();
     }
-    
+
     private void log(String msg)
     {
         Log.d("MainActivity", msg);

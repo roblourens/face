@@ -4,14 +4,6 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <Button
-        android:id="@+id/takePictureButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="Take picture"
-        android:textSize="25dp" />
-
     <GridView
         android:id="@+id/gridView"
         android:layout_width="match_parent"
