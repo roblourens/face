@@ -12,13 +12,13 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
-import android.widget.FrameLayout;
 
 class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 {
     private SurfaceHolder holder;
     private Camera camera;
     private int camId;
+    private boolean previewIsRunning = false;
 
     CameraPreview(Context context)
     {
@@ -38,15 +38,29 @@ class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     {
         holder = getHolder();
         holder.addCallback(this);
-
-        camera = getFrontFacingCameraIfAvailable();
         holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+    }
+
+    public void setCamera(Camera camera, int camId)
+    {
+        this.camera = camera;
+        this.camId = camId;
+    }
+
+    public void releaseCamera()
+    {
+        if (camera != null)
+        {
+            stopPreview();
+            camera.release();
+            camera = null;
+        }
     }
 
     public void surfaceCreated(SurfaceHolder holder)
     {
         if (camera == null)
-            camera = getFrontFacingCameraIfAvailable();
+            loge("Camera is null!");
 
         try
         {
@@ -56,7 +70,7 @@ class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         {
             camera.release();
             camera = null;
-            log("setPreviewDisplay failed");
+            logd("setPreviewDisplay failed");
         }
     }
 
@@ -64,9 +78,7 @@ class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     // shouldn't be needed
     public void surfaceDestroyed(SurfaceHolder holder)
     {
-        camera.stopPreview();
-        camera.release();
-        camera = null;
+        releaseCamera();
     }
 
     public Camera getCamera()
@@ -82,7 +94,7 @@ class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
         if (camera == null)
         {
-            log("Measuring without camera");
+            loge("Measuring without camera");
             setMeasuredDimension(maxW, maxH);
         }
         else
@@ -93,7 +105,7 @@ class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
                     .getSupportedPreviewSizes());
             Size optimalSize = getSizeWithClosestPriceIsRightWidth(
                     supportedSizes, maxW);
-            log("Using preview size: " + optimalSize.width + ", "
+            logd("Using preview size: " + optimalSize.width + ", "
                     + optimalSize.height);
 
             // adjust to fill the screen
@@ -129,46 +141,34 @@ class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
     public void surfaceChanged(SurfaceHolder holder, int format, int w, int h)
     {
-        log("surfaceChanged");
-        Camera.Parameters parameters = camera.getParameters();
+        logd("surfaceChanged");
 
-        // Should return the same size found in onMeasure
-        Size optimalSize = getSizeWithClosestPriceIsRightWidth(
-                rotateSizes(parameters.getSupportedPreviewSizes()), w);
-
-        // rotated from portrait w and h
-        parameters.setPreviewSize(optimalSize.height, optimalSize.width);
-
-        // force portrait orientation
-        CameraInfo info = new CameraInfo();
-        Camera.getCameraInfo(camId, info);
-        log("Cam orientation: " + info.orientation);
-        parameters.setRotation(info.orientation);
-
-        camera.setParameters(parameters);
-
-        // Rotate preview display to portrait
-        camera.setDisplayOrientation(360 - info.orientation);
-
-        camera.startPreview();
-    }
-
-    private Camera getFrontFacingCameraIfAvailable()
-    {
-        // Find front-facing camera id
-        for (int camId = 0; camId < Camera.getNumberOfCameras(); camId++)
+        // if preview is running, setDisplayOrientation will fail and the other
+        // stuff is unnecessary
+        if (!previewIsRunning)
         {
-            // wtf language is this again?
-            Camera.CameraInfo info = new Camera.CameraInfo();
-            Camera.getCameraInfo(camId, info);
-            if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT)
-            {
-                this.camId = camId;
-                return Camera.open(camId);
-            }
-        }
+            Camera.Parameters parameters = camera.getParameters();
 
-        return Camera.open();
+            // Should return the same size found in onMeasure
+            Size optimalSize = getSizeWithClosestPriceIsRightWidth(
+                    rotateSizes(parameters.getSupportedPreviewSizes()), w);
+
+            // rotated from portrait w and h
+            parameters.setPreviewSize(optimalSize.height, optimalSize.width);
+
+            // force portrait orientation
+            CameraInfo info = new CameraInfo();
+            Camera.getCameraInfo(camId, info);
+            logd("Cam orientation: " + info.orientation);
+            parameters.setRotation(info.orientation);
+
+            camera.setParameters(parameters);
+
+            // Rotate preview display to portrait
+            camera.setDisplayOrientation(360 - info.orientation);
+
+            startPreview();
+        }
     }
 
     private List<Size> rotateSizes(List<Size> sizes)
@@ -183,8 +183,25 @@ class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         return sizes;
     }
 
-    private void log(String msg)
+    private void startPreview()
     {
-        Log.d(this.getClass().toString(), msg);
+        camera.startPreview();
+        previewIsRunning = true;
+    }
+
+    private void stopPreview()
+    {
+        camera.stopPreview();
+        previewIsRunning = false;
+    }
+
+    private void logd(String msg)
+    {
+        Log.d("CameraPreview", msg);
+    }
+
+    private void loge(String msg)
+    {
+        Log.e("CameraPreview", msg);
     }
 }

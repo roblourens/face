@@ -1,6 +1,8 @@
 package com.quail.face;
 
+import android.hardware.Camera;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.WindowManager;
 import android.widget.Button;
 
@@ -27,7 +29,47 @@ public class TakeActivity extends SherlockFragmentActivity
                 .setOnClickListener(new ShutterHandler(this, cameraPreview
                         .getCamera()));
     }
-    /*
-     * private void log(String msg) { Log.d(this.getClass().toString(), msg); }
-     */
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        logd("onResume");
+
+        int camId = getFrontFacingCameraIdIfAvailable();
+        Camera camera = camId != -1 ? Camera.open(camId) : Camera.open();
+        cameraPreview.setCamera(camera, camId);
+    }
+
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        logd("onPause");
+
+        cameraPreview.releaseCamera();
+    }
+
+    private int getFrontFacingCameraIdIfAvailable()
+    {
+        // Find front-facing camera id
+        for (int camId = 0; camId < Camera.getNumberOfCameras(); camId++)
+        {
+            // wtf language is this again?
+            Camera.CameraInfo info = new Camera.CameraInfo();
+            Camera.getCameraInfo(camId, info);
+            if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT)
+            {
+                return camId;
+            }
+        }
+
+        return -1;
+    }
+
+    private void logd(String msg)
+    {
+        Log.d("TakeActivity", msg);
+    }
+
 }

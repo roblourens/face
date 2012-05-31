@@ -53,7 +53,7 @@ public class ImageAdapter extends BaseAdapter
     @Override
     public View getView(int position, View convertView, ViewGroup parent)
     {
-        log("getView");
+        //log("getView");
         ImageView gridImage;
         // reuse old view if able
         if (convertView != null && convertView instanceof ImageView)
