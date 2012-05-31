@@ -63,7 +63,6 @@ public class ImageAdapter extends BaseAdapter
 
         gridImage.setLayoutParams(new GridView.LayoutParams(85, 85));
         gridImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        gridImage.setPadding(8, 8, 8, 8);
 
         Bitmap bm = BitmapFactory.decodeFile(imagePaths.get(position));
         gridImage.setImageBitmap(bm);
@@ -75,7 +74,7 @@ public class ImageAdapter extends BaseAdapter
     {
         Log.d("ImageAdapter", msg);
     }
-    
+
     private class RefreshTask extends AsyncTask<Void, Void, Void>
     {
         @Override
@@ -96,7 +95,7 @@ public class ImageAdapter extends BaseAdapter
             });
             return null;
         }
-        
+
         @Override
         protected void onPostExecute(Void result)
         {

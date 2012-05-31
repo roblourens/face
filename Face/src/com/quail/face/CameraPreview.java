@@ -11,6 +11,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
+import android.widget.FrameLayout;
 
 class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 {
@@ -30,7 +32,8 @@ class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         init();
     }
 
-    @SuppressWarnings("deprecation") // setType really is apparently needed
+    @SuppressWarnings("deprecation")
+    // setType really is apparently needed
     private void init()
     {
         holder = getHolder();
@@ -48,7 +51,8 @@ class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         try
         {
             camera.setPreviewDisplay(holder);
-        } catch (IOException exception)
+        }
+        catch (IOException exception)
         {
             camera.release();
             camera = null;
@@ -70,69 +74,82 @@ class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         return camera;
     }
 
-    private Size getOptimalPreviewSize(List<Size> supportedSizes, int w, int h)
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec)
     {
-        final double ASPECT_TOLERANCE = 0.05;
-        double targetRatio = (double) w / h;
+        int maxW = View.MeasureSpec.getSize(widthMeasureSpec);
+        int maxH = View.MeasureSpec.getSize(heightMeasureSpec);
+
+        if (camera == null)
+        {
+            log("Measuring without camera");
+            setMeasuredDimension(maxW, maxH);
+        }
+        else
+        {
+            Camera.Parameters parameters = camera.getParameters();
+
+            List<Size> supportedSizes = rotateSizes(parameters
+                    .getSupportedPreviewSizes());
+            Size optimalSize = getSizeWithClosestPriceIsRightWidth(
+                    supportedSizes, maxW);
+            log("Using preview size: " + optimalSize.width + ", "
+                    + optimalSize.height);
+
+            // adjust to fill the screen
+            double aspectRatio = optimalSize.height / (float) optimalSize.width;
+            int chosenH = (int) (aspectRatio * maxW);
+
+            // Set SurfaceView measured size
+            setMeasuredDimension(maxW, chosenH);
+        }
+    }
+
+    private Size getSizeWithClosestPriceIsRightWidth(List<Size> supportedSizes,
+            int w)
+    {
         if (supportedSizes == null)
             return null;
 
-        Size optimalSize = null;
+        Size closestSize = null;
         double minDiff = Double.MAX_VALUE;
 
-        int targetHeight = h;
-
-        // Try to find an size match aspect ratio and size
         for (Size size : supportedSizes)
         {
-            double ratio = (double) size.width / size.height;
-            if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE)
-                continue;
-            if (Math.abs(size.height - targetHeight) < minDiff)
+            double diff = w - size.width;
+            if (diff > 0 && diff < minDiff)
             {
-                optimalSize = size;
-                minDiff = Math.abs(size.height - targetHeight);
+                closestSize = size;
+                minDiff = diff;
             }
         }
 
-        // Cannot find one matching the aspect ratio, ignore that
-        // requirement
-        if (optimalSize == null)
-        {
-            minDiff = Double.MAX_VALUE;
-            for (Size size : supportedSizes)
-            {
-                if (Math.abs(size.height - targetHeight) < minDiff)
-                {
-                    optimalSize = size;
-                    minDiff = Math.abs(size.height - targetHeight);
-                }
-            }
-        }
-        return optimalSize;
+        return closestSize;
     }
 
     public void surfaceChanged(SurfaceHolder holder, int format, int w, int h)
     {
+        log("surfaceChanged");
         Camera.Parameters parameters = camera.getParameters();
 
-        // Set preview size
-        List<Size> supportedSizes = parameters.getSupportedPreviewSizes();
-        Size optimalSize = getOptimalPreviewSize(supportedSizes, w, h);
-        log("Using preview size: " + optimalSize.width + ", "
-                + optimalSize.height);
-        parameters.setPreviewSize(optimalSize.width, optimalSize.height);
-        
-        // Set orientation
+        // Should return the same size found in onMeasure
+        Size optimalSize = getSizeWithClosestPriceIsRightWidth(
+                rotateSizes(parameters.getSupportedPreviewSizes()), w);
+
+        // rotated from portrait w and h
+        parameters.setPreviewSize(optimalSize.height, optimalSize.width);
+
+        // force portrait orientation
         CameraInfo info = new CameraInfo();
         Camera.getCameraInfo(camId, info);
         log("Cam orientation: " + info.orientation);
-
-        // force portrait orientation
         parameters.setRotation(info.orientation);
 
         camera.setParameters(parameters);
-        camera.setDisplayOrientation(90);
+
+        // Rotate preview display to portrait
+        camera.setDisplayOrientation(360 - info.orientation);
+
         camera.startPreview();
     }
 
@@ -152,6 +169,18 @@ class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         }
 
         return Camera.open();
+    }
+
+    private List<Size> rotateSizes(List<Size> sizes)
+    {
+        for (Size s : sizes)
+        {
+            int tmp = s.width;
+            s.width = s.height;
+            s.height = tmp;
+        }
+
+        return sizes;
     }
 
     private void log(String msg)
