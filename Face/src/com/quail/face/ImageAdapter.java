@@ -13,7 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.GridView;
+import android.widget.Gallery;
 import android.widget.ImageView;
 
 public class ImageAdapter extends BaseAdapter
@@ -53,7 +53,6 @@ public class ImageAdapter extends BaseAdapter
     @Override
     public View getView(int position, View convertView, ViewGroup parent)
     {
-        //log("getView");
         ImageView gridImage;
         // reuse old view if able
         if (convertView != null && convertView instanceof ImageView)
@@ -61,7 +60,7 @@ public class ImageAdapter extends BaseAdapter
         else
             gridImage = new ImageView(a);
 
-        gridImage.setLayoutParams(new GridView.LayoutParams(85, 85));
+        gridImage.setLayoutParams(new Gallery.LayoutParams(150, 150));
         gridImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
         Bitmap bm = BitmapFactory.decodeFile(imagePaths.get(position));

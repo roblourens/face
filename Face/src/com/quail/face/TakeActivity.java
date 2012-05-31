@@ -12,6 +12,7 @@ import com.actionbarsherlock.view.Window;
 public class TakeActivity extends SherlockFragmentActivity
 {
     private CameraPreview cameraPreview;
+    private ShutterHandler shutterHandler;
 
     /** Called when the activity is first created. */
     @Override
@@ -25,9 +26,9 @@ public class TakeActivity extends SherlockFragmentActivity
         setContentView(R.layout.take);
 
         cameraPreview = (CameraPreview) findViewById(R.id.cameraPreview);
+        shutterHandler = new ShutterHandler(this);
         ((Button) findViewById(R.id.takeButton))
-                .setOnClickListener(new ShutterHandler(this, cameraPreview
-                        .getCamera()));
+                .setOnClickListener(shutterHandler);
     }
 
     @Override
@@ -39,6 +40,7 @@ public class TakeActivity extends SherlockFragmentActivity
         int camId = getFrontFacingCameraIdIfAvailable();
         Camera camera = camId != -1 ? Camera.open(camId) : Camera.open();
         cameraPreview.setCamera(camera, camId);
+        shutterHandler.setCamera(camera);
     }
 
     @Override
@@ -48,6 +50,7 @@ public class TakeActivity extends SherlockFragmentActivity
         logd("onPause");
 
         cameraPreview.releaseCamera();
+        shutterHandler.setCamera(null);
     }
 
     private int getFrontFacingCameraIdIfAvailable()

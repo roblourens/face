@@ -8,18 +8,14 @@
         android:id="@+id/takePictureButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Take picture"
         android:layout_gravity="center_horizontal"
+        android:text="Take picture"
         android:textSize="25dp" />
 
-    <GridView
-        android:id="@+id/pictureGridView"
+    <Gallery
+        android:id="@+id/gallery"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:numColumns="4"
-        android:verticalSpacing="10dp"
-        android:horizontalSpacing="10dp"
-        android:stretchMode="columnWidth" >
-    </GridView>
+        android:layout_height="wrap_content"
+        android:spacing="10dp" />
 
 </LinearLayout>

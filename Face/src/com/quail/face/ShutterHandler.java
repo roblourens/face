@@ -12,16 +12,23 @@ public class ShutterHandler implements OnClickListener, Camera.ShutterCallback,
     private Activity a;
     private Camera camera;
 
-    public ShutterHandler(Activity a, Camera cam)
+    public ShutterHandler(Activity a)
     {
         this.a = a;
-        this.camera = cam;
+    }
+
+    public void setCamera(Camera camera)
+    {
+        this.camera = camera;
     }
 
     @Override
     public void onClick(View v)
     {
-        camera.takePicture(this, null, this);
+        if (camera != null)
+            camera.takePicture(this, null, this);
+        else
+            log("null camera");
     }
 
     @Override
@@ -35,12 +42,12 @@ public class ShutterHandler implements OnClickListener, Camera.ShutterCallback,
     {
         log("onPictureTaken");
         camera.startPreview();
-        
+
         ((FaceApplication) a.getApplication()).getImageFM().saveImage(data);
     }
-    
+
     private void log(String msg)
     {
-        Log.d(this.getClass().toString(), msg);
+        Log.d("ShutterHandler", msg);
     }
 }

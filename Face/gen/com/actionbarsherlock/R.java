@@ -818,6 +818,7 @@ containing a value of this type.
         public static final int abs__up=0x7f04000b;
         public static final int cameraPreview=0x7f040029;
         public static final int disableHome=0x7f040009;
+        public static final int gallery=0x7f040028;
         public static final int homeAsUp=0x7f040006;
         public static final int listMode=0x7f040002;
         public static final int menu_add_person=0x7f04002d;
@@ -825,7 +826,6 @@ containing a value of this type.
         public static final int menu_refresh=0x7f04002e;
         public static final int normal=0x7f040001;
         public static final int overlayLayout=0x7f04002a;
-        public static final int pictureGridView=0x7f040028;
         public static final int showCustom=0x7f040008;
         public static final int showHome=0x7f040005;
         public static final int showTitle=0x7f040007;
