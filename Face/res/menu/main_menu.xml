@@ -4,16 +4,13 @@
     <item
         android:id="@+id/menu_prefs"
         android:icon="@drawable/ic_menu_preferences"
+        android:orderInCategory="0"
         android:showAsAction="ifRoom"
         android:title="Settings"/>
     <item
-        android:id="@+id/menu_add_person"
-        android:icon="@drawable/ic_menu_add"
-        android:showAsAction="ifRoom"
-        android:title="Add New Person"/>
-    <item
         android:id="@+id/menu_camera"
         android:icon="@drawable/ic_menu_camera"
+        android:orderInCategory="2"
         android:showAsAction="ifRoom"
         android:title="Take picture"/>
 

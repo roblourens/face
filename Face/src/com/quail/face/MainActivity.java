@@ -10,6 +10,7 @@ import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.SubMenu;
 
 public class MainActivity extends SherlockActivity
 {
@@ -40,7 +41,16 @@ public class MainActivity extends SherlockActivity
     {
         MenuInflater inflater = getSupportMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
-        return true;
+
+        SubMenu submenu = menu.addSubMenu(Menu.NONE, 38, 1, "");
+        submenu.add("Person 1");
+        submenu.add("Add new person");
+
+        MenuItem submenuItem = submenu.getItem();
+        submenu.setIcon(R.drawable.ic_menu_more);
+        submenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override

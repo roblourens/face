@@ -8,6 +8,9 @@
 package com.actionbarsherlock;
 
 public final class R {
+    public static final class array {
+        public static final int action_list=0x7f0b0000;
+    }
     public static final class attr {
         /**  Specified if we are forcing an action item overflow menu. 
          <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
@@ -786,8 +789,9 @@ containing a value of this type.
         public static final int ic_launcher=0x7f020055;
         public static final int ic_menu_add=0x7f020056;
         public static final int ic_menu_camera=0x7f020057;
-        public static final int ic_menu_preferences=0x7f020058;
-        public static final int ic_refresh=0x7f020059;
+        public static final int ic_menu_more=0x7f020058;
+        public static final int ic_menu_preferences=0x7f020059;
+        public static final int ic_refresh=0x7f02005a;
     }
     public static final class id {
         public static final int abs__action_bar=0x7f040022;
@@ -824,8 +828,7 @@ containing a value of this type.
         public static final int gridView=0x7f040027;
         public static final int homeAsUp=0x7f040006;
         public static final int listMode=0x7f040002;
-        public static final int menu_add_person=0x7f04002c;
-        public static final int menu_camera=0x7f04002d;
+        public static final int menu_camera=0x7f04002c;
         public static final int menu_prefs=0x7f04002b;
         public static final int normal=0x7f040001;
         public static final int overlayLayout=0x7f040029;
@@ -867,7 +870,7 @@ containing a value of this type.
         public static final int take=0x7f030017;
     }
     public static final class menu {
-        public static final int main_menu=0x7f0b0000;
+        public static final int main_menu=0x7f0c0000;
     }
     public static final class string {
         /**  Content description for the action bar "home" affordance. [CHAR LIMIT=NONE] 

@@ -4,4 +4,10 @@
     <string name="hello">Hello World, MainActivity!</string>
     <string name="app_name">Face</string>
 
+    <string-array name="action_list">
+        <item>Mercury</item>
+        <item>Venus</item>
+        <item>Earth</item>
+    </string-array>
+
 </resources>
