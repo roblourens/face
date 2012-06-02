@@ -5,6 +5,7 @@ import android.hardware.Camera;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Toast;
 
 public class ShutterHandler implements OnClickListener, Camera.ShutterCallback,
         Camera.PictureCallback
@@ -45,7 +46,13 @@ public class ShutterHandler implements OnClickListener, Camera.ShutterCallback,
         log("onPictureTaken");
         camera.startPreview();
 
-        ((FaceApplication) a.getApplication()).getImageFM().saveImage(data, id);
+        ImageFileManager imageFM = ((FaceApplication) a.getApplication())
+                .getImageFM();
+        if (!imageFM.saveImage(data, id))
+        {
+            Toast.makeText(a, "Could not save photo", 4);
+            log("Could not save the new image");
+        }
     }
 
     private void log(String msg)

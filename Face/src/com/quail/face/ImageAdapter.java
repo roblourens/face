@@ -21,6 +21,7 @@ import android.widget.LinearLayout;
 public class ImageAdapter extends BaseAdapter
 {
     private Activity a;
+    private ImageFileManager imageFM;
     private List<String> imagePaths = new ArrayList<String>();
     private int personId;
 
@@ -28,6 +29,8 @@ public class ImageAdapter extends BaseAdapter
     {
         this.a = a;
         this.personId = personId;
+        this.imageFM = ((FaceApplication) a.getApplication()).getImageFM();
+
         refresh();
     }
 
@@ -76,15 +79,14 @@ public class ImageAdapter extends BaseAdapter
 
         // these are in px, converted from dp by * scale
         int n = 4; // # columns
-        double margin = 6 * scale; // outer, can't figure out how to change
-                                   // it
+        double margin = 6 * scale; // outer, comes from listSelector width
         double spacing = 6 * scale; // inner
         int side = (int) ((screenW - margin * 2 - spacing * (n - 1)) / n);
-        log("GridView items with side: " + side + "px");
         gridImage.setLayoutParams(new GridView.LayoutParams(side, side));
         gridImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
-        Bitmap bm = BitmapFactory.decodeFile(imagePaths.get(position));
+        Bitmap bm = imageFM.getThumbnailForImage(personId,
+                imagePaths.get(position));
         gridImage.setImageBitmap(bm);
 
         return gridImage;
@@ -100,8 +102,7 @@ public class ImageAdapter extends BaseAdapter
         @Override
         protected Void doInBackground(Void... params)
         {
-            imagePaths = ((FaceApplication) a.getApplication()).getImageFM()
-                    .getImagePathsForPerson(personId);
+            imagePaths = imageFM.getImagePathsForPerson(personId);
             log("Refreshed and found " + imagePaths.size() + " images");
 
             // Sort them backwards (new/large numbers -> old/small numbers)

@@ -1,5 +1,6 @@
 package com.quail.face;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -10,6 +11,8 @@ import java.util.List;
 import java.util.Random;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.util.Log;
 
@@ -94,20 +97,38 @@ public class ImageFileManager
         return imgPaths;
     }
 
+    public Bitmap getThumbnailForImage(int id, String imagePath)
+    {
+        String thumbFileName = "thumb_" + new File(imagePath).getName();
+        File thumbFile = new File(getPersonThumbsDir(id), thumbFileName);
+        if (!thumbFile.exists())
+        {
+            log("Thumbnail for existing image " + imagePath
+                    + " not found, creating");
+            makeThumbnailForImage(id, imagePath);
+        }
+
+        return BitmapFactory.decodeFile(thumbFile.getAbsolutePath());
+    }
+
     private File getPersonDirFile(int id, boolean gallery)
     {
-        File galleryDirFile = new File(extGalleryPath, "people/" + id + "");
-        File nonGalleryDirFile = new File(extNonGalleryPath, "people/" + id + "");
-        return gallery ? galleryDirFile : nonGalleryDirFile;
+        File galleryDir = new File(extGalleryPath, "people/" + id + "");
+        File nonGalleryDir = new File(extNonGalleryPath, "people/" + id + "");
+        return gallery ? galleryDir : nonGalleryDir;
     }
 
     private File getPersonImagesDir(int id, boolean gallery)
     {
-        File galleryImagePathFile = new File(getPersonDirFile(id, true),
+        File galleryImageDir = new File(getPersonDirFile(id, true), "images");
+        File nonGalleryImageDir = new File(getPersonDirFile(id, false),
                 "images");
-        File nonGalleryImagePathFile = new File(getPersonDirFile(id, false),
-                "images");
-        return gallery ? galleryImagePathFile : nonGalleryImagePathFile;
+        return gallery ? galleryImageDir : nonGalleryImageDir;
+    }
+
+    private File getPersonThumbsDir(int id)
+    {
+        return new File(getPersonDirFile(id, false), "thumbs");
     }
 
     public boolean saveImage(byte[] data, int id)
@@ -127,11 +148,51 @@ public class ImageFileManager
     {
         File tmpFile = saveToExternalTmpFile(data);
         if (tmpFile == null)
+        {
+            log("Could not save to tmp file");
             return false;
+        }
 
         String imageName = newImageFileName();
         File imagesFile = getPersonImagesDir(id, gallery);
-        return tmpFile.renameTo(new File(imagesFile, imageName));
+        return tmpFile.renameTo(new File(imagesFile, imageName))
+                && saveThumbnail(data, id, imageName);
+    }
+
+    private boolean saveThumbnail(byte[] data, int id, String fullSizeName)
+    {
+        Bitmap fullSize = BitmapFactory.decodeByteArray(data, 0, data.length);
+        return saveThumbnail(fullSize, id, fullSizeName);
+    }
+
+    private boolean makeThumbnailForImage(int id, String imagePath)
+    {
+        Bitmap fullSize = BitmapFactory.decodeFile(imagePath);
+        String fullSizeName = new File(imagePath).getName();
+        return saveThumbnail(fullSize, id, fullSizeName);
+    }
+
+    private boolean saveThumbnail(Bitmap fullSize, int id, String fullSizeName)
+    {
+        // scale to width, maintain aspect ratio
+        int width = 150; // px
+        int height = width * fullSize.getHeight() / fullSize.getWidth();
+        Bitmap scaled = Bitmap
+                .createScaledBitmap(fullSize, width, height, true);
+
+        String fileName = "thumb_" + fullSizeName;
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        scaled.compress(Bitmap.CompressFormat.JPEG, 90, stream);
+        File tmpFile = saveToExternalTmpFile(stream.toByteArray());
+
+        if (tmpFile == null)
+        {
+            log("Could not save thumb to tmp file");
+            return false;
+        }
+
+        File thumbsDir = getPersonThumbsDir(id);
+        return tmpFile.renameTo(new File(thumbsDir, fileName));
     }
 
     private File saveToExternalTmpFile(byte[] data)
