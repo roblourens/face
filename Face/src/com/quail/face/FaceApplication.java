@@ -6,6 +6,7 @@ import android.util.Log;
 public class FaceApplication extends Application
 {
     private ImageFileManager imageFM;
+    private PrefsManager prefsManager;
 
     @Override
     public void onCreate()
@@ -14,11 +15,17 @@ public class FaceApplication extends Application
         log("onCreate");
         
         imageFM = new ImageFileManager(this);
+        prefsManager = new PrefsManager(this);
     }
 
     public ImageFileManager getImageFM()
     {
         return imageFM;
+    }
+    
+    public PrefsManager getPrefsManager()
+    {
+        return prefsManager;
     }
 
     private void log(String msg)

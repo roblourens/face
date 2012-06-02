@@ -6,7 +6,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
@@ -16,24 +15,22 @@ import android.util.Log;
 
 public class ImageFileManager
 {
+    // person dirs are in these, and should exist in both
     private final String extGalleryPath;
     private final String extNonGalleryPath;
+
     private final String extTmpPath;
 
-    private Context c;
-
+    // See notes.txt
     public ImageFileManager(Context c)
     {
-        this.c = c;
-
         File picturesDir = Environment
                 .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         File extGalleryPathFile = new File(picturesDir, "face/");
         extGalleryPathFile.mkdirs();
         extGalleryPath = extGalleryPathFile.getAbsolutePath();
 
-        File extNonGalleryPathFile = new File(c.getExternalFilesDir(null),
-                "images/");
+        File extNonGalleryPathFile = c.getExternalFilesDir(null);
         if (extNonGalleryPathFile.mkdirs())
         {
             // dirs didn't already exist, so make the nomedia file.
@@ -67,46 +64,56 @@ public class ImageFileManager
         return Environment.MEDIA_MOUNTED.equals(state);
     }
 
+    public int numberOfPersons()
+    {
+        // should be the same number of person dirs as extNonGalleryPath
+        return new File(extGalleryPath).list().length;
+    }
+
     /**
      * Checks all image storage locations, regardless of preferences
      * 
      * @return A list of absolute paths to all found images
      */
-    public List<String> getImagePaths()
+    public List<String> getImagePathsForPerson(int id)
     {
         List<String> imgPaths = new ArrayList<String>();
 
-        // find images in external storage, in the gallery
-        File extNonGalleryDir = new File(extNonGalleryPath);
-        for (File f : extNonGalleryDir.listFiles())
-            imgPaths.add(f.getAbsolutePath());
-
-        // find images in external storage, not in the gallery
-        File extGalleryDir = new File(extGalleryPath);
-        for (File f : extGalleryDir.listFiles())
-            imgPaths.add(f.getAbsolutePath());
-
-        // remove paths that are not jpgs
-        Iterator<String> it = imgPaths.iterator();
-        while (it.hasNext())
+        File[] checkDirs = new File[] { getPersonImagesDir(id, true),
+                getPersonImagesDir(id, false) };
+        for (File imageDir : checkDirs)
         {
-            String path = it.next();
-            if (!path.toLowerCase().endsWith(".jpg")
-                    && !path.toLowerCase().endsWith(".jpeg"))
-                it.remove();
+            for (File f : imageDir.listFiles())
+            {
+                String fileName = f.getName().toLowerCase();
+                if (fileName.endsWith(".jpg") || fileName.endsWith(".jpeg"))
+                    imgPaths.add(f.getAbsolutePath());
+            }
         }
 
         return imgPaths;
     }
 
-    public boolean saveImage(byte[] data)
+    private File getPersonDirFile(int id, boolean gallery)
+    {
+        File galleryDirFile = new File(extGalleryPath, "people/" + id + "");
+        File nonGalleryDirFile = new File(extNonGalleryPath, "people/" + id + "");
+        return gallery ? galleryDirFile : nonGalleryDirFile;
+    }
+
+    private File getPersonImagesDir(int id, boolean gallery)
+    {
+        File galleryImagePathFile = new File(getPersonDirFile(id, true),
+                "images");
+        File nonGalleryImagePathFile = new File(getPersonDirFile(id, false),
+                "images");
+        return gallery ? galleryImagePathFile : nonGalleryImagePathFile;
+    }
+
+    public boolean saveImage(byte[] data, int id)
     {
         // TODO prefs
-        if (saveImageToExternalStorageNonGallery(data))
-            log("Saved to external storage, non gallery");
-        else
-            return false;
-
+        saveImage(data, id, true);
         return true;
     }
 
@@ -114,36 +121,17 @@ public class ImageFileManager
      * Saves the given jpg image data to the external storage location, in the
      * gallery
      * 
-     * @param data
-     *            jpg image data
      * @return true if successful, false otherwise
      */
-    private boolean saveImageToExternalStorageGallery(byte[] data)
+    private boolean saveImage(byte[] data, int id, boolean gallery)
     {
         File tmpFile = saveToExternalTmpFile(data);
         if (tmpFile == null)
             return false;
 
         String imageName = newImageFileName();
-        return tmpFile.renameTo(new File(extNonGalleryPath, imageName));
-    }
-
-    /**
-     * Saves the given jpg image data to the external storage location, not in
-     * the gallery
-     * 
-     * @param data
-     *            jpg image data
-     * @return true if successful, false otherwise
-     */
-    private boolean saveImageToExternalStorageNonGallery(byte[] data)
-    {
-        File tmpFile = saveToExternalTmpFile(data);
-        if (tmpFile == null)
-            return false;
-
-        String imageName = newImageFileName();
-        return tmpFile.renameTo(new File(extNonGalleryPath, imageName));
+        File imagesFile = getPersonImagesDir(id, gallery);
+        return tmpFile.renameTo(new File(imagesFile, imageName));
     }
 
     private File saveToExternalTmpFile(byte[] data)
@@ -194,7 +182,7 @@ public class ImageFileManager
 
     private String newImageFileName()
     {
-        return "face_person1_" + System.currentTimeMillis() + ".jpg";
+        return "face_" + System.currentTimeMillis() + ".jpg";
     }
 
     private void log(String msg)

@@ -11,10 +11,12 @@ public class ShutterHandler implements OnClickListener, Camera.ShutterCallback,
 {
     private Activity a;
     private Camera camera;
+    private int id;
 
-    public ShutterHandler(Activity a)
+    public ShutterHandler(Activity a, int id)
     {
         this.a = a;
+        this.id = id;
     }
 
     public void setCamera(Camera camera)
@@ -43,7 +45,7 @@ public class ShutterHandler implements OnClickListener, Camera.ShutterCallback,
         log("onPictureTaken");
         camera.startPreview();
 
-        ((FaceApplication) a.getApplication()).getImageFM().saveImage(data);
+        ((FaceApplication) a.getApplication()).getImageFM().saveImage(data, id);
     }
 
     private void log(String msg)

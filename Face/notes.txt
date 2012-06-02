@@ -1,11 +1,14 @@
 Image storage:
 If SD card is present:
     If user selected option to put files in the gallery:
-        <ext_storage>/Pictures/face/
+        <pub_pics>/face/people/<person_num>/images
+        and thumbnail
     Else:
-        <ext_storage>/com.quail.face/images
+        <ext_app_storage>/people/<person_num>/images
+        and thumbnail
 Else:
     fail
     
-    
-Image display: how about horizontally scrolling rows by month?
+   
+Thumbnails:
+    <ext_app_storage>/people/<person_num>/thumbs

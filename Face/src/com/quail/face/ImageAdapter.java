@@ -22,10 +22,12 @@ public class ImageAdapter extends BaseAdapter
 {
     private Activity a;
     private List<String> imagePaths = new ArrayList<String>();
+    private int personId;
 
-    public ImageAdapter(Activity a)
+    public ImageAdapter(Activity a, int personId)
     {
         this.a = a;
+        this.personId = personId;
         refresh();
     }
 
@@ -99,7 +101,7 @@ public class ImageAdapter extends BaseAdapter
         protected Void doInBackground(Void... params)
         {
             imagePaths = ((FaceApplication) a.getApplication()).getImageFM()
-                    .getImagePaths();
+                    .getImagePathsForPerson(personId);
             log("Refreshed and found " + imagePaths.size() + " images");
 
             // Sort them backwards (new/large numbers -> old/small numbers)

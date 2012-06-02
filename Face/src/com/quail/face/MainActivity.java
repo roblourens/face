@@ -23,7 +23,7 @@ public class MainActivity extends SherlockActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-        adapter = new ImageAdapter(this);
+        adapter = new ImageAdapter(this, 0);
         GridView gv = (GridView) findViewById(R.id.gridView);
         gv.setAdapter(adapter);
     }

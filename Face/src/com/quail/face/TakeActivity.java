@@ -14,6 +14,8 @@ public class TakeActivity extends SherlockFragmentActivity
     private CameraPreview cameraPreview;
     private ShutterHandler shutterHandler;
 
+    private static final String PERSON_ID_KEY = "person_id";
+
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -25,8 +27,11 @@ public class TakeActivity extends SherlockFragmentActivity
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.take);
 
+        // get person id from Intent
+        int id = getIntent().getIntExtra(PERSON_ID_KEY, 0);
+
         cameraPreview = (CameraPreview) findViewById(R.id.cameraPreview);
-        shutterHandler = new ShutterHandler(this);
+        shutterHandler = new ShutterHandler(this, id);
         ((Button) findViewById(R.id.takeButton))
                 .setOnClickListener(shutterHandler);
     }
