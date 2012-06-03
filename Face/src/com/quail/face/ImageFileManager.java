@@ -1,10 +1,12 @@
 package com.quail.face;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +16,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 
 public class ImageFileManager
@@ -21,12 +24,14 @@ public class ImageFileManager
     // person dirs are in these, and should exist in both
     private final String extGalleryPath;
     private final String extNonGalleryPath;
-
     private final String extTmpPath;
+
+    private Context c;
 
     // See notes.txt
     public ImageFileManager(Context c)
     {
+        this.c = c;
         File picturesDir = Environment
                 .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         File extGalleryPathFile = new File(picturesDir, "face/");
@@ -131,20 +136,13 @@ public class ImageFileManager
         return new File(getPersonDirFile(id, false), "thumbs");
     }
 
-    public boolean saveImage(byte[] data, int id)
-    {
-        // TODO prefs
-        saveImage(data, id, true);
-        return true;
-    }
-
     /**
      * Saves the given jpg image data to the external storage location, in the
      * gallery
      * 
      * @return true if successful, false otherwise
      */
-    private boolean saveImage(byte[] data, int id, boolean gallery)
+    public boolean saveImage(byte[] data, int id)
     {
         File tmpFile = saveToExternalTmpFile(data);
         if (tmpFile == null)
@@ -154,9 +152,45 @@ public class ImageFileManager
         }
 
         String imageName = newImageFileName();
-        File imagesFile = getPersonImagesDir(id, gallery);
-        return tmpFile.renameTo(new File(imagesFile, imageName))
+        File imagesFile = getPersonImagesDir(id, false);
+        boolean success = tmpFile.renameTo(new File(imagesFile, imageName))
                 && saveThumbnail(data, id, imageName);
+        if (!success)
+            return false;
+
+        // TODO prefs
+        // copy to gallery if needed. don't care if it fails
+        if (true)
+        {
+            try
+            {
+                File galleryFile = new File(getPersonImagesDir(id, true),
+                        imageName);
+                InputStream is = new ByteArrayInputStream(data);
+                OutputStream fos = new FileOutputStream(galleryFile);
+                if (!copyStreams(is, fos))
+                    return false;
+
+                is.close();
+                fos.close();
+
+                MediaStore.Images.Media.insertImage(c.getContentResolver(),
+                        galleryFile.getAbsolutePath(), galleryFile.getName(),
+                        "face");
+            }
+            catch (FileNotFoundException e)
+            {
+                e.printStackTrace();
+                return false;
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+                // comes from .close(), don't care
+            }
+        }
+
+        return success;
     }
 
     private boolean saveThumbnail(byte[] data, int id, String fullSizeName)
@@ -204,29 +238,25 @@ public class ImageFileManager
                     + System.currentTimeMillis() + ".jpg";
             File tmpFile = new File(extTmpPath, randomName);
 
+            InputStream inStream = new ByteArrayInputStream(data);
             OutputStream outStream;
             try
             {
                 outStream = new FileOutputStream(tmpFile);
-                outStream.write(data);
             }
             catch (FileNotFoundException e)
             {
-                // file exists but is a directory rather than a regular file,
-                // does not exist but cannot be created, or cannot be opened for
-                // any other reason
-                e.printStackTrace();
-                return null;
-            }
-            catch (IOException e)
-            {
-                // File could not be written
                 e.printStackTrace();
                 return null;
             }
 
+            // do the copy
+            if (!copyStreams(inStream, outStream))
+                return null;
+
             try
             {
+                inStream.close();
                 outStream.close();
             }
             catch (IOException e)
@@ -234,11 +264,30 @@ public class ImageFileManager
                 // file has been written, ignore this problem
                 e.printStackTrace();
             }
+
             return tmpFile;
         }
         else
             // external storage can't be written to
             return null;
+    }
+
+    private boolean copyStreams(InputStream inStream, OutputStream outStream)
+    {
+        try
+        {
+            byte[] buffer = new byte[1024];
+            int read;
+            while ((read = inStream.read(buffer)) > 0)
+                outStream.write(buffer, 0, read);
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
     }
 
     private String newImageFileName()
