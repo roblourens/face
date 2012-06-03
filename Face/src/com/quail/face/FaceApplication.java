@@ -13,7 +13,7 @@ public class FaceApplication extends Application
     {
         super.onCreate();
         log("onCreate");
-        
+
         imageFM = new ImageFileManager(this);
         prefsManager = new PrefsManager(this);
     }
@@ -22,7 +22,7 @@ public class FaceApplication extends Application
     {
         return imageFM;
     }
-    
+
     public PrefsManager getPrefsManager()
     {
         return prefsManager;

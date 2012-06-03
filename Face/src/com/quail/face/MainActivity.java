@@ -15,6 +15,9 @@ import com.actionbarsherlock.view.SubMenu;
 public class MainActivity extends SherlockActivity
 {
     private ImageAdapter adapter;
+    private int curPerson;
+
+    private final int NEW_PERSON_ID = 1000;
 
     /** Called when the activity is first created. */
     @Override
@@ -22,8 +25,18 @@ public class MainActivity extends SherlockActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        
+        int lastPersonId = getFaceApplication().getPrefsManager()
+                .getLastPerson();
+        int numPersons = getFaceApplication().getImageFM().numberOfPersons();
+        
+        // default to 1 if something has gone wrong
+        if (lastPersonId <= 0 || lastPersonId > numPersons)
+            lastPersonId = 1;
+        
+        adapter = new ImageAdapter(this, lastPersonId);
+        curPerson = lastPersonId;
 
-        adapter = new ImageAdapter(this, 0);
         GridView gv = (GridView) findViewById(R.id.gridView);
         gv.setAdapter(adapter);
     }
@@ -42,12 +55,22 @@ public class MainActivity extends SherlockActivity
         MenuInflater inflater = getSupportMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
 
-        SubMenu submenu = menu.addSubMenu(Menu.NONE, 38, 1, "");
-        submenu.add("Person 1");
-        submenu.add("Add new person");
+        // Add persons drop-down submenu
+        SubMenu submenu = menu.addSubMenu(Menu.NONE, Menu.NONE, 1, "");
+        
+        // Add entry for each person, 1-indexed
+        int numPersons = getFaceApplication().getImageFM().numberOfPersons();
+        for (int i = 1; i <= numPersons; i++)
+            submenu.add(Menu.NONE, i, Menu.NONE, "Person " + i);
+        
+        // Add 'Add new person' item as last entry 
+        submenu.add(Menu.NONE, NEW_PERSON_ID, Menu.NONE, "Add new person");
+        
+        // Add 'Delete person' item TODO temporary, move to settings
+        submenu.add(Menu.NONE, NEW_PERSON_ID+1, Menu.NONE, "Delete person");
 
         MenuItem submenuItem = submenu.getItem();
-        submenu.setIcon(R.drawable.ic_menu_more);
+        submenuItem.setIcon(R.drawable.ic_menu_more);
         submenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
         return super.onCreateOptionsMenu(menu);
@@ -56,12 +79,38 @@ public class MainActivity extends SherlockActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
+        int numPeople = getFaceApplication().getImageFM().numberOfPersons();
+        
         if (item.getItemId() == R.id.menu_camera)
         {
-            startActivity(new Intent(this, TakeActivity.class));
+            Intent i = new Intent(this, TakeActivity.class);
+            i.putExtra(TakeActivity.PERSON_ID_KEY, curPerson);
+            startActivity(i);
             return true;
         }
-
+        else if (item.getItemId() == NEW_PERSON_ID)
+        {
+            // add new person
+            getFaceApplication().getImageFM().addPerson();
+            invalidateOptionsMenu();
+            return true;
+        }
+        else if (item.getItemId() == NEW_PERSON_ID + 1)
+        {
+            // delete last person
+            ImageFileManager imageFM = getFaceApplication().getImageFM();
+            int lastPersonId = imageFM.numberOfPersons();
+            if (lastPersonId != 1)
+            {
+                getFaceApplication().getImageFM().removePerson(lastPersonId);
+                invalidateOptionsMenu();
+            }
+        }
+        else if (item.getItemId() > 0 && item.getItemId() <= numPeople)
+        {
+            switchToPerson(item.getItemId());
+        }
+        
         return false;
     }
 
@@ -71,6 +120,17 @@ public class MainActivity extends SherlockActivity
         {
             adapter.refresh();
         }
+    }
+
+    private void switchToPerson(int id)
+    {
+        curPerson = id;
+        
+        // Save this id in prefs as the last viewed person id
+        getFaceApplication().getPrefsManager().setLastPerson(curPerson);
+        
+        // Set the person id in the ImageAdapter for the GridView and refresh
+        adapter.setPersonIdAndRefresh(id);
     }
 
     private boolean sdCardCheck()

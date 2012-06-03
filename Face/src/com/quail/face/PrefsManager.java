@@ -39,6 +39,6 @@ public class PrefsManager
 
     private SharedPreferences getPrefs()
     {
-        return c.getSharedPreferences(PREFS_NAME, 0);
+        return c.getSharedPreferences(PREFS_NAME, 1);
     }
 }

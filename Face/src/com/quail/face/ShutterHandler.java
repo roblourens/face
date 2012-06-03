@@ -50,7 +50,7 @@ public class ShutterHandler implements OnClickListener, Camera.ShutterCallback,
                 .getImageFM();
         if (!imageFM.saveImage(data, id))
         {
-            Toast.makeText(a, "Could not save photo", 4);
+            Toast.makeText(a, "Could not save photo", 4).show();
             log("Could not save the new image");
         }
     }

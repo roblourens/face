@@ -74,8 +74,76 @@ public class ImageFileManager
 
     public int numberOfPersons()
     {
-        // should be the same number of person dirs as extNonGalleryPath
-        return new File(extGalleryPath).list().length;
+        // should be the same number of person dirs as gallery peopleDir
+        return getPeopleDir(false).list().length;
+    }
+
+    // Returns new person id
+    public int addPerson()
+    {
+        int newId = numberOfPersons() + 1;
+
+        // create all dirs needed for person
+        getPersonImagesDir(newId, true).mkdirs();
+        getPersonImagesDir(newId, false).mkdirs();
+        getPersonThumbsDir(newId).mkdirs();
+
+        return newId;
+    }
+
+    public boolean removePerson(int id)
+    {
+        // delete existing person dirs
+        File personDirGallery = getPersonDir(id, true);
+        deleteFile(personDirGallery);
+        File personDir = getPersonDir(id, false);
+        deleteFile(personDir);
+
+        if (personDir.exists() || personDirGallery.exists())
+        {
+            log("Problem: " + personDir.getAbsolutePath() + " was not deleted");
+            return false;
+        }
+
+        // reassign person #s
+        for (int i = id + 1; i <= numberOfPersons(); i++)
+        {
+            personDir = getPersonDir(i, true);
+            File targetDir = getPersonDir(i - 1, true);
+            if (!personDir.renameTo(targetDir))
+                log("failed to rename " + personDir.getAbsolutePath() + " to "
+                        + targetDir.getAbsolutePath());
+        }
+
+        return true;
+    }
+
+    private void deleteFile(File f)
+    {
+        if (!f.exists())
+            return;
+
+        // delete file
+        if (f.isFile())
+        {
+            f.delete();
+            return;
+        }
+        // empty and delete dir
+        else
+        {
+            for (File subF : f.listFiles())
+                deleteFile(subF);
+
+            // should be empty by this point
+            if (f.list().length == 0)
+            {
+                f.delete();
+                return;
+            }
+            else
+                return;
+        }
     }
 
     /**
@@ -116,24 +184,26 @@ public class ImageFileManager
         return BitmapFactory.decodeFile(thumbFile.getAbsolutePath());
     }
 
-    private File getPersonDirFile(int id, boolean gallery)
+    private File getPeopleDir(boolean gallery)
     {
-        File galleryDir = new File(extGalleryPath, "people/" + id + "");
-        File nonGalleryDir = new File(extNonGalleryPath, "people/" + id + "");
+        File galleryDir = new File(extGalleryPath, "people");
+        File nonGalleryDir = new File(extNonGalleryPath, "people");
         return gallery ? galleryDir : nonGalleryDir;
+    }
+
+    private File getPersonDir(int id, boolean gallery)
+    {
+        return new File(getPeopleDir(gallery), "" + id);
     }
 
     private File getPersonImagesDir(int id, boolean gallery)
     {
-        File galleryImageDir = new File(getPersonDirFile(id, true), "images");
-        File nonGalleryImageDir = new File(getPersonDirFile(id, false),
-                "images");
-        return gallery ? galleryImageDir : nonGalleryImageDir;
+        return new File(getPersonDir(id, gallery), "images");
     }
 
     private File getPersonThumbsDir(int id)
     {
-        return new File(getPersonDirFile(id, false), "thumbs");
+        return new File(getPersonDir(id, false), "thumbs");
     }
 
     /**
@@ -153,14 +223,19 @@ public class ImageFileManager
 
         String imageName = newImageFileName();
         File imagesFile = getPersonImagesDir(id, false);
-        boolean success = tmpFile.renameTo(new File(imagesFile, imageName))
-                && saveThumbnail(data, id, imageName);
-        if (!success)
+        File destFile = new File(imagesFile, imageName);
+        boolean renameSuccess = tmpFile.renameTo(destFile);
+        boolean thumbSuccess = saveThumbnail(data, id, imageName);
+        if (!renameSuccess || !thumbSuccess)
+        {
+            log("Couldn't save image or thumb " + destFile.getAbsolutePath());
             return false;
+        }
 
         // TODO prefs
         // copy to gallery if needed. don't care if it fails
-        if (true)
+        boolean gallery = false;
+        if (gallery)
         {
             try
             {
@@ -190,7 +265,7 @@ public class ImageFileManager
             }
         }
 
-        return success;
+        return true;
     }
 
     private boolean saveThumbnail(byte[] data, int id, String fullSizeName)

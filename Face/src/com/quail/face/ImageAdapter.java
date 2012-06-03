@@ -7,16 +7,13 @@ import java.util.List;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 public class ImageAdapter extends BaseAdapter
 {
@@ -31,6 +28,12 @@ public class ImageAdapter extends BaseAdapter
         this.personId = personId;
         this.imageFM = ((FaceApplication) a.getApplication()).getImageFM();
 
+        refresh();
+    }
+    
+    public void setPersonIdAndRefresh(int personId)
+    {
+        this.personId = personId;
         refresh();
     }
 

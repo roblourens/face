@@ -14,7 +14,7 @@ public class TakeActivity extends SherlockFragmentActivity
     private CameraPreview cameraPreview;
     private ShutterHandler shutterHandler;
 
-    private static final String PERSON_ID_KEY = "person_id";
+    public static final String PERSON_ID_KEY = "person_id";
 
     /** Called when the activity is first created. */
     @Override
