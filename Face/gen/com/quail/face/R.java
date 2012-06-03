@@ -787,11 +787,12 @@ containing a value of this type.
         public static final int abs__tab_selected_pressed_holo=0x7f020053;
         public static final int abs__tab_unselected_pressed_holo=0x7f020054;
         public static final int ic_launcher=0x7f020055;
-        public static final int ic_menu_add=0x7f020056;
-        public static final int ic_menu_camera=0x7f020057;
-        public static final int ic_menu_more=0x7f020058;
-        public static final int ic_menu_preferences=0x7f020059;
-        public static final int ic_refresh=0x7f02005a;
+        public static final int ic_media_ff=0x7f020056;
+        public static final int ic_menu_add=0x7f020057;
+        public static final int ic_menu_camera=0x7f020058;
+        public static final int ic_menu_more=0x7f020059;
+        public static final int ic_menu_preferences=0x7f02005a;
+        public static final int ic_refresh=0x7f02005b;
     }
     public static final class id {
         public static final int abs__action_bar=0x7f040022;
@@ -828,7 +829,8 @@ containing a value of this type.
         public static final int gridView=0x7f040027;
         public static final int homeAsUp=0x7f040006;
         public static final int listMode=0x7f040002;
-        public static final int menu_camera=0x7f04002c;
+        public static final int menu_camera=0x7f04002d;
+        public static final int menu_export=0x7f04002c;
         public static final int menu_prefs=0x7f04002b;
         public static final int normal=0x7f040001;
         public static final int overlayLayout=0x7f040029;
