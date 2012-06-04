@@ -88,11 +88,22 @@ public class MainActivity extends SherlockActivity
             startActivity(i);
             return true;
         }
+        else if (item.getItemId() == R.id.menu_export)
+        {
+            Intent i = new Intent(this, ExportActivity.class);
+            i.putExtra(ExportActivity.PERSON_ID_KEY, curPerson);
+            startActivity(i);
+        }
+        else if (item.getItemId() == R.id.menu_prefs)
+        {
+            
+        }
         else if (item.getItemId() == NEW_PERSON_ID)
         {
             // add new person
             getFaceApplication().getImageFM().addPerson();
             invalidateOptionsMenu();
+            Toast.makeText(this, "New person added", 3).show();
             return true;
         }
         else if (item.getItemId() == NEW_PERSON_ID + 1)
@@ -100,10 +111,12 @@ public class MainActivity extends SherlockActivity
             // delete last person
             ImageFileManager imageFM = getFaceApplication().getImageFM();
             int lastPersonId = imageFM.numberOfPersons();
-            if (lastPersonId != 1)
+            if (lastPersonId > 1)
             {
                 getFaceApplication().getImageFM().removePerson(lastPersonId);
                 invalidateOptionsMenu();
+                if (lastPersonId == curPerson)
+                    switchToPerson(lastPersonId-1);
             }
         }
         else if (item.getItemId() > 0 && item.getItemId() <= numPeople)

@@ -2,11 +2,13 @@ package com.quail.face;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 
 public class PrefsManager
 {
-    public static final String PREFS_NAME = "com.quail.face.Prefs";
-    public static final String LAST_PERSON_KEY = "last_person";
+    private static final String PREFS_NAME = "com.quail.face.Prefs";
+    private static final String LAST_PERSON_KEY = "last_person";
+    private static final String LAST_RATE_KEY = "last_rate";
 
     private Context c;
 
@@ -32,8 +34,23 @@ public class PrefsManager
     public boolean setLastPerson(int lastId)
     {
         SharedPreferences settings = getPrefs();
-        SharedPreferences.Editor editor = settings.edit();
+        Editor editor = settings.edit();
         editor.putInt(LAST_PERSON_KEY, lastId);
+        return editor.commit();
+    }
+
+    // faces/sec
+    public int getLastRate()
+    {
+        SharedPreferences settings = getPrefs();
+        return settings.getInt(LAST_RATE_KEY, 4);
+    }
+
+    public boolean setLastRate(int lastRate)
+    {
+        SharedPreferences settings = getPrefs();
+        Editor editor = settings.edit();
+        editor.putInt(LAST_RATE_KEY, lastRate);
         return editor.commit();
     }
 

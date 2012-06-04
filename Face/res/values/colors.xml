@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="export_button_normal">#32CD32</color>
+    <color name="export_button_pressed">#009900</color>
+    
+</resources>

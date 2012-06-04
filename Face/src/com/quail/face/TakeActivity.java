@@ -22,6 +22,7 @@ public class TakeActivity extends SherlockFragmentActivity
     {
         super.onCreate(savedInstanceState);
 
+        // make fullscreen, hide crap
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -79,5 +80,4 @@ public class TakeActivity extends SherlockFragmentActivity
     {
         Log.d("TakeActivity", msg);
     }
-
 }

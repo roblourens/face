@@ -34,6 +34,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Sherlock" >
         </activity>
+        <activity
+            android:name=".ExportActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Sherlock" >
+        </activity>
     </application>
 
 </manifest>
