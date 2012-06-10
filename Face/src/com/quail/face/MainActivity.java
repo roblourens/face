@@ -1,7 +1,10 @@
 package com.quail.face;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.GridView;
 import android.widget.Toast;
@@ -25,15 +28,15 @@ public class MainActivity extends SherlockActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        
+
         int lastPersonId = getFaceApplication().getPrefsManager()
                 .getLastPerson();
         int numPersons = getFaceApplication().getImageFM().numberOfPersons();
-        
+
         // default to 1 if something has gone wrong
         if (lastPersonId <= 0 || lastPersonId > numPersons)
             lastPersonId = 1;
-        
+
         adapter = new ImageAdapter(this, lastPersonId);
         curPerson = lastPersonId;
 
@@ -57,17 +60,17 @@ public class MainActivity extends SherlockActivity
 
         // Add persons drop-down submenu
         SubMenu submenu = menu.addSubMenu(Menu.NONE, Menu.NONE, 1, "");
-        
+
         // Add entry for each person, 1-indexed
         int numPersons = getFaceApplication().getImageFM().numberOfPersons();
         for (int i = 1; i <= numPersons; i++)
             submenu.add(Menu.NONE, i, Menu.NONE, "Person " + i);
-        
-        // Add 'Add new person' item as last entry 
+
+        // Add 'Add new person' item as last entry
         submenu.add(Menu.NONE, NEW_PERSON_ID, Menu.NONE, "Add new person");
-        
+
         // Add 'Delete person' item TODO temporary, move to settings
-        submenu.add(Menu.NONE, NEW_PERSON_ID+1, Menu.NONE, "Delete person");
+        submenu.add(Menu.NONE, NEW_PERSON_ID + 1, Menu.NONE, "Delete person");
 
         MenuItem submenuItem = submenu.getItem();
         submenuItem.setIcon(R.drawable.ic_menu_more);
@@ -80,7 +83,7 @@ public class MainActivity extends SherlockActivity
     public boolean onOptionsItemSelected(MenuItem item)
     {
         int numPeople = getFaceApplication().getImageFM().numberOfPersons();
-        
+
         if (item.getItemId() == R.id.menu_camera)
         {
             Intent i = new Intent(this, TakeActivity.class);
@@ -96,7 +99,7 @@ public class MainActivity extends SherlockActivity
         }
         else if (item.getItemId() == R.id.menu_prefs)
         {
-            
+
         }
         else if (item.getItemId() == NEW_PERSON_ID)
         {
@@ -116,14 +119,14 @@ public class MainActivity extends SherlockActivity
                 getFaceApplication().getImageFM().removePerson(lastPersonId);
                 invalidateOptionsMenu();
                 if (lastPersonId == curPerson)
-                    switchToPerson(lastPersonId-1);
+                    switchToPerson(lastPersonId - 1);
             }
         }
         else if (item.getItemId() > 0 && item.getItemId() <= numPeople)
         {
             switchToPerson(item.getItemId());
         }
-        
+
         return false;
     }
 
@@ -138,10 +141,10 @@ public class MainActivity extends SherlockActivity
     private void switchToPerson(int id)
     {
         curPerson = id;
-        
+
         // Save this id in prefs as the last viewed person id
         getFaceApplication().getPrefsManager().setLastPerson(curPerson);
-        
+
         // Set the person id in the ImageAdapter for the GridView and refresh
         adapter.setPersonIdAndRefresh(id);
     }

@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -21,10 +23,9 @@ import android.util.Log;
 
 public class ImageFileManager
 {
-    // person dirs are in these, and should exist in both
-    private final String extGalleryPath;
-    private final String extNonGalleryPath;
-    private final String extTmpPath;
+    private final File extAppDir;
+    private final File tmpDir;
+    private final File peopleDir;
 
     private Context c;
 
@@ -32,18 +33,14 @@ public class ImageFileManager
     public ImageFileManager(Context c)
     {
         this.c = c;
-        File picturesDir = Environment
-                .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-        File extGalleryPathFile = new File(picturesDir, "face/");
-        extGalleryPathFile.mkdirs();
-        extGalleryPath = extGalleryPathFile.getAbsolutePath();
 
-        File extNonGalleryPathFile = c.getExternalFilesDir(null);
-        if (extNonGalleryPathFile.mkdirs())
+        // init app root
+        extAppDir = c.getExternalFilesDir(null);
+        if (extAppDir.mkdirs())
         {
-            // dirs didn't already exist, so make the nomedia file.
-            // prevents Android media scanner from adding this to the gallery
-            File noMediaFile = new File(extNonGalleryPathFile, ".nomedia");
+            // root didn't already exist, so make the nomedia file.
+            // prevents Android media scanner from adding media to the gallery
+            File noMediaFile = new File(extAppDir, ".nomedia");
             try
             {
                 noMediaFile.createNewFile();
@@ -53,11 +50,14 @@ public class ImageFileManager
                 e.printStackTrace();
             }
         }
-        extNonGalleryPath = extNonGalleryPathFile.getAbsolutePath();
 
-        File extTmpPathFile = new File(c.getExternalFilesDir(null), "tmp/");
-        extTmpPathFile.mkdirs();
-        extTmpPath = extTmpPathFile.getAbsolutePath();
+        // init private tmp dir
+        tmpDir = new File(extAppDir, "tmp/");
+        tmpDir.mkdirs();
+
+        // init people dir
+        peopleDir = new File(extAppDir, "people/");
+        peopleDir.mkdirs();
     }
 
     /**
@@ -74,8 +74,7 @@ public class ImageFileManager
 
     public int numberOfPersons()
     {
-        // should be the same number of person dirs as gallery peopleDir
-        return getPeopleDir(false).list().length;
+        return peopleDir.list().length;
     }
 
     // Returns new person id
@@ -84,9 +83,9 @@ public class ImageFileManager
         int newId = numberOfPersons() + 1;
 
         // create all dirs needed for person
-        getPersonImagesDir(newId, true).mkdirs();
-        getPersonImagesDir(newId, false).mkdirs();
+        getPersonImagesDir(newId).mkdirs();
         getPersonThumbsDir(newId).mkdirs();
+        getPersonVideoDir(newId).mkdirs();
 
         return newId;
     }
@@ -94,12 +93,10 @@ public class ImageFileManager
     public boolean removePerson(int id)
     {
         // delete existing person dirs
-        File personDirGallery = getPersonDir(id, true);
-        deleteFile(personDirGallery);
-        File personDir = getPersonDir(id, false);
+        File personDir = getPersonDir(id);
         deleteFile(personDir);
 
-        if (personDir.exists() || personDirGallery.exists())
+        if (personDir.exists())
         {
             log("Problem: " + personDir.getAbsolutePath() + " was not deleted");
             return false;
@@ -108,8 +105,8 @@ public class ImageFileManager
         // reassign person #s
         for (int i = id + 1; i <= numberOfPersons(); i++)
         {
-            personDir = getPersonDir(i, true);
-            File targetDir = getPersonDir(i - 1, true);
+            personDir = getPersonDir(i);
+            File targetDir = getPersonDir(i - 1);
             if (!personDir.renameTo(targetDir))
                 log("failed to rename " + personDir.getAbsolutePath() + " to "
                         + targetDir.getAbsolutePath());
@@ -155,16 +152,11 @@ public class ImageFileManager
     {
         List<String> imgPaths = new ArrayList<String>();
 
-        File[] checkDirs = new File[] { getPersonImagesDir(id, true),
-                getPersonImagesDir(id, false) };
-        for (File imageDir : checkDirs)
+        for (File f : getPersonImagesDir(id).listFiles())
         {
-            for (File f : imageDir.listFiles())
-            {
-                String fileName = f.getName().toLowerCase();
-                if (fileName.endsWith(".jpg") || fileName.endsWith(".jpeg"))
-                    imgPaths.add(f.getAbsolutePath());
-            }
+            String fileName = f.getName().toLowerCase();
+            if (fileName.endsWith(".jpg") || fileName.endsWith(".jpeg"))
+                imgPaths.add(f.getAbsolutePath());
         }
 
         return imgPaths;
@@ -184,26 +176,43 @@ public class ImageFileManager
         return BitmapFactory.decodeFile(thumbFile.getAbsolutePath());
     }
 
-    private File getPeopleDir(boolean gallery)
+    /**
+     * Determine the path of the last generated video
+     * 
+     * @param id
+     *            person id
+     * @return path to the last generated video or null if there is none
+     */
+    public String getLastVideoPath(int id)
     {
-        File galleryDir = new File(extGalleryPath, "people");
-        File nonGalleryDir = new File(extNonGalleryPath, "people");
-        return gallery ? galleryDir : nonGalleryDir;
+        String[] videoPaths = getPersonVideoDir(id).list();
+        Arrays.sort(videoPaths);
+
+        if (videoPaths.length == 0)
+            return null;
+        else
+            return new File(getPersonVideoDir(id),
+                    videoPaths[videoPaths.length - 1]).getAbsolutePath();
     }
 
-    private File getPersonDir(int id, boolean gallery)
+    private File getPersonDir(int id)
     {
-        return new File(getPeopleDir(gallery), "" + id);
+        return new File(peopleDir, "" + id);
     }
 
-    private File getPersonImagesDir(int id, boolean gallery)
+    public File getPersonImagesDir(int id)
     {
-        return new File(getPersonDir(id, gallery), "images");
+        return new File(getPersonDir(id), "images");
+    }
+
+    public File getPersonVideoDir(int id)
+    {
+        return new File(getPersonDir(id), "videos");
     }
 
     private File getPersonThumbsDir(int id)
     {
-        return new File(getPersonDir(id, false), "thumbs");
+        return new File(getPersonDir(id), "thumbs");
     }
 
     /**
@@ -221,8 +230,8 @@ public class ImageFileManager
             return false;
         }
 
-        String imageName = newImageFileName();
-        File imagesFile = getPersonImagesDir(id, false);
+        String imageName = nextImageFileName(id);
+        File imagesFile = getPersonImagesDir(id);
         File destFile = new File(imagesFile, imageName);
         boolean renameSuccess = tmpFile.renameTo(destFile);
         boolean thumbSuccess = saveThumbnail(data, id, imageName);
@@ -234,34 +243,19 @@ public class ImageFileManager
 
         // TODO prefs
         // copy to gallery if needed. don't care if it fails
-        boolean gallery = false;
+        boolean gallery = true;
         if (gallery)
         {
             try
             {
-                File galleryFile = new File(getPersonImagesDir(id, true),
-                        imageName);
-                InputStream is = new ByteArrayInputStream(data);
-                OutputStream fos = new FileOutputStream(galleryFile);
-                if (!copyStreams(is, fos))
-                    return false;
-
-                is.close();
-                fos.close();
-
                 MediaStore.Images.Media.insertImage(c.getContentResolver(),
-                        galleryFile.getAbsolutePath(), galleryFile.getName(),
-                        "face");
+                        destFile.getAbsolutePath(), destFile.getName(), "face");
             }
             catch (FileNotFoundException e)
             {
                 e.printStackTrace();
-                return false;
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-                // comes from .close(), don't care
+                log("File not found by insertImage: "
+                        + destFile.getAbsolutePath());
             }
         }
 
@@ -304,6 +298,72 @@ public class ImageFileManager
         return tmpFile.renameTo(new File(thumbsDir, fileName));
     }
 
+    /**
+     * Sorts the images for this person id alphanumerically then renames them so
+     * that there are no gaps in the number assignments
+     */
+    public void reorderImages(int id)
+    {
+        List<String> imagePaths = getImagePathsForPerson(id);
+
+        // sort in alphanumeric order
+        Collections.sort(imagePaths);
+
+        for (int i = 1; i <= imagePaths.size(); i++)
+        {
+            File image = new File(imagePaths.get(i - 1));
+
+            boolean namedCorrectly = false;
+            try
+            {
+                int imageFileNumber = Integer.parseInt(image.getName().split(
+                        "\\.")[0]);
+                namedCorrectly = imageFileNumber == i;
+            }
+            catch (NumberFormatException nfe)
+            {
+                log(image.getAbsolutePath() + " not named as a number");
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+                log("failed on " + image.getAbsolutePath());
+            }
+
+            if (!namedCorrectly)
+            {
+                String newFileName = imageFileNameForNumber(i);
+                File newFile = new File(image.getParent(), newFileName);
+                if (!image.renameTo(newFile))
+                    log("renaming to " + newFile.getAbsolutePath() + " failed");
+            }
+        }
+    }
+
+    private int nextImageNumber(int id)
+    {
+        List<String> imagePaths = getImagePathsForPerson(id);
+
+        // sort in alphanumeric order
+        Collections.sort(imagePaths);
+
+        for (int i = imagePaths.size() - 1; i >= 0; i++)
+        {
+            File last = new File(imagePaths.get(i));
+
+            try
+            {
+                return Integer.parseInt(last.getName().split("\\.")[0]) + 1;
+            }
+            catch (NumberFormatException nfe)
+            {
+                log("Image not named as a number: " + last.getAbsolutePath());
+            }
+        }
+
+        return 1;
+    }
+
     private File saveToExternalTmpFile(byte[] data)
     {
         if (sdCardIsAvailable())
@@ -311,7 +371,7 @@ public class ImageFileManager
             // We can read and write the media
             String randomName = new Random().nextInt() + "_"
                     + System.currentTimeMillis() + ".jpg";
-            File tmpFile = new File(extTmpPath, randomName);
+            File tmpFile = new File(tmpDir, randomName);
 
             InputStream inStream = new ByteArrayInputStream(data);
             OutputStream outStream;
@@ -364,10 +424,15 @@ public class ImageFileManager
 
         return true;
     }
-
-    private String newImageFileName()
+    
+    private String imageFileNameForNumber(int imageNumber)
     {
-        return "face_" + System.currentTimeMillis() + ".jpg";
+        return String.format("%04d.jpg", imageNumber);
+    }
+
+    private String nextImageFileName(int id)
+    {
+        return imageFileNameForNumber(nextImageNumber(id));
     }
 
     private void log(String msg)

@@ -85,4 +85,11 @@
         android:textColor="@android:color/primary_text_light"
         android:textSize="24dp" />
 
+    <com.quail.face.ListenerVideoView
+        android:id="@+id/faceVideoView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="40dp" />
+
 </LinearLayout>

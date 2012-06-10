@@ -1,14 +1,10 @@
 Image storage:
 If SD card is present:
-    If user selected option to put files in the gallery:
-        <pub_pics>/face/people/<person_num>/images
-        and thumbnail
-    Else:
-        <ext_app_storage>/people/<person_num>/images
-        and thumbnail
+    full:  <ext_app_storage>/people/<person_num>/images
+    thumb: <ext_app_storage>/people/<person_num>/thumbs
+    video: <ext_app_storage>/people/<person_num>/videos
+    If the user has selected to put images in the gallery:
+        MediaStore insertImage copies to somewhere else
+        images can be deleted from the gallery independently from the app images
 Else:
     fail
-    
-   
-Thumbnails:
-    <ext_app_storage>/people/<person_num>/thumbs
