@@ -3,6 +3,7 @@ package com.quail.face;
 import java.io.File;
 
 import uk.co.halfninja.videokit.Videokit;
+import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
@@ -158,6 +159,17 @@ public class ExportActivity extends SherlockActivity implements
 
     private class MakeMovieTask extends AsyncTask<Void, Void, String>
     {
+        private ProgressDialog dialog;
+        
+        @Override
+        protected void onPreExecute()
+        {
+            super.onPreExecute();
+
+            dialog = ProgressDialog.show(ExportActivity.this,
+                    "", "Making movie...", true);
+        }
+
         @Override
         protected String doInBackground(Void... params)
         {
@@ -172,8 +184,7 @@ public class ExportActivity extends SherlockActivity implements
                     videoName).getAbsolutePath();
 
             vk.run(new String[] { "ffmpeg", "-r", rate + "", "-i", input, "-b",
-                    "8000", "-vcodec", "mpeg4", "-y", output });
-            // TODO read logcat to get progress
+                    "16000", "-vcodec", "mpeg4", "-y", output });
 
             return output;
         }
@@ -186,6 +197,8 @@ public class ExportActivity extends SherlockActivity implements
             log("Exported with path " + videoPath);
             curVideoPath = videoPath;
             videoView.setVideoPath(videoPath);
+            
+            dialog.dismiss();
         }
     }
 }
