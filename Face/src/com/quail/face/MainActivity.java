@@ -1,10 +1,7 @@
 package com.quail.face;
 
 import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.GridView;
 import android.widget.Toast;
@@ -42,6 +39,10 @@ public class MainActivity extends SherlockActivity
 
         GridView gv = (GridView) findViewById(R.id.gridView);
         gv.setAdapter(adapter);
+        GridItemListener itemListener = new GridItemListener(adapter,
+                getFaceApplication().getImageFM(), this);
+        gv.setOnItemClickListener(itemListener);
+        gv.setOnItemLongClickListener(itemListener);
     }
 
     @Override
@@ -76,7 +77,7 @@ public class MainActivity extends SherlockActivity
         submenuItem.setIcon(R.drawable.ic_menu_more);
         submenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
-        return super.onCreateOptionsMenu(menu);
+        return true;
     }
 
     @Override

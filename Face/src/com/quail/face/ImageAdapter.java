@@ -30,7 +30,7 @@ public class ImageAdapter extends BaseAdapter
 
         refresh();
     }
-    
+
     public void setPersonIdAndRefresh(int personId)
     {
         this.personId = personId;
@@ -49,7 +49,7 @@ public class ImageAdapter extends BaseAdapter
     }
 
     @Override
-    public Object getItem(int position)
+    public String getItem(int position)
     {
         return imagePaths.get(position);
     }
@@ -71,8 +71,7 @@ public class ImageAdapter extends BaseAdapter
             gridImage = new ImageView(a);
 
         // can't get the 'normal' way of doing this to work right, so need
-        // to
-        // just figure out the exact sizes manually
+        // to just figure out the exact sizes manually
         // gotta hate Android
         @SuppressWarnings("deprecation")
         int screenW = a.getWindowManager().getDefaultDisplay().getWidth(); // px

@@ -143,6 +143,12 @@ public class ImageFileManager
         }
     }
 
+    public void deleteImage(String path)
+    {
+        if (!new File(path).delete())
+            log("image " + path + " was not deleted");
+    }
+
     /**
      * Checks all image storage locations, regardless of preferences
      * 
@@ -243,7 +249,7 @@ public class ImageFileManager
 
         // TODO prefs
         // copy to gallery if needed. don't care if it fails
-        boolean gallery = true;
+        boolean gallery = false;
         if (gallery)
         {
             try
@@ -424,7 +430,7 @@ public class ImageFileManager
 
         return true;
     }
-    
+
     private String imageFileNameForNumber(int imageNumber)
     {
         return String.format("%04d.jpg", imageNumber);
