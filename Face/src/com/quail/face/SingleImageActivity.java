@@ -45,7 +45,7 @@ public class SingleImageActivity extends SherlockActivity
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage("Delete this picture?")
                     .setTitle("Delete")
-                    .setCancelable(false)
+                    .setCancelable(true)
                     .setPositiveButton("Yes",
                             new DialogInterface.OnClickListener()
                             {

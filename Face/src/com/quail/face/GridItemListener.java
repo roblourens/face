@@ -62,7 +62,7 @@ public class GridItemListener implements OnItemClickListener,
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage("Delete this picture?")
                 .setTitle("Delete")
-                .setCancelable(false)
+                .setCancelable(true)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener()
                 {
                     public void onClick(DialogInterface dialog, int id)
