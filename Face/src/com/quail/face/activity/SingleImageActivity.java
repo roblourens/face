@@ -1,10 +1,14 @@
 package com.quail.face.activity;
 
+import java.util.Date;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
@@ -31,6 +35,11 @@ public class SingleImageActivity extends SherlockActivity
         imageView.setImageBitmap(BitmapFactory.decodeFile(imagePath));
 
         imageFM = ((FaceApplication) getApplication()).getImageFM();
+
+        Date imageDate = new Date(imageFM.getDateForImage(imagePath));
+        CharSequence formattedDate = DateFormat.format("MMM dd, yyyy, h:mm aa",
+                imageDate);
+        ((TextView) findViewById(R.id.image_date)).setText(formattedDate);
     }
 
     @Override

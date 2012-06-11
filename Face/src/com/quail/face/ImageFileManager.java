@@ -176,10 +176,15 @@ public class ImageFileManager
         {
             log("Thumbnail for existing image " + imagePath
                     + " not found, creating");
-            makeThumbnailForImage(id, imagePath);
         }
+        makeThumbnailForImage(id, imagePath);
 
         return BitmapFactory.decodeFile(thumbFile.getAbsolutePath());
+    }
+    
+    public long getDateForImage(String imagePath)
+    {
+        return new File(imagePath).lastModified();
     }
 
     /**
@@ -314,6 +319,9 @@ public class ImageFileManager
 
         // sort in alphanumeric order
         Collections.sort(imagePaths);
+        
+        for (String s : imagePaths)
+            log(new File(s).getName());
 
         for (int i = 1; i <= imagePaths.size(); i++)
         {
