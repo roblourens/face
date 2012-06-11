@@ -1,5 +1,8 @@
 package com.quail.face;
 
+import com.quail.face.activity.MainActivity;
+import com.quail.face.activity.SingleImageActivity;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;

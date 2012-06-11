@@ -788,16 +788,17 @@ containing a value of this type.
         public static final int abs__tab_selected_holo=0x7f020052;
         public static final int abs__tab_selected_pressed_holo=0x7f020053;
         public static final int abs__tab_unselected_pressed_holo=0x7f020054;
-        public static final int export_button=0x7f020055;
-        public static final int ic_launcher=0x7f020056;
-        public static final int ic_media_ff=0x7f020057;
-        public static final int ic_menu_add=0x7f020058;
-        public static final int ic_menu_camera=0x7f020059;
-        public static final int ic_menu_more=0x7f02005a;
-        public static final int ic_menu_preferences=0x7f02005b;
-        public static final int ic_refresh=0x7f02005c;
-        public static final int ic_trash_holo_dark=0x7f02005d;
-        public static final int icon=0x7f02005e;
+        public static final int bg=0x7f020055;
+        public static final int export_button=0x7f020056;
+        public static final int ic_launcher=0x7f020057;
+        public static final int ic_media_ff=0x7f020058;
+        public static final int ic_menu_add=0x7f020059;
+        public static final int ic_menu_camera=0x7f02005a;
+        public static final int ic_menu_more=0x7f02005b;
+        public static final int ic_menu_preferences=0x7f02005c;
+        public static final int ic_refresh=0x7f02005d;
+        public static final int ic_trash_holo_dark=0x7f02005e;
+        public static final int icon=0x7f02005f;
     }
     public static final class id {
         public static final int abs__action_bar=0x7f050022;

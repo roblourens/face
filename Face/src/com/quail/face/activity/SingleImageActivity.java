@@ -1,4 +1,4 @@
-package com.quail.face;
+package com.quail.face.activity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -9,6 +9,9 @@ import android.widget.ImageView;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.quail.face.FaceApplication;
+import com.quail.face.ImageFileManager;
+import com.quail.face.R;
 
 public class SingleImageActivity extends SherlockActivity
 {

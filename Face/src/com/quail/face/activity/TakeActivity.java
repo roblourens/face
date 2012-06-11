@@ -1,4 +1,4 @@
-package com.quail.face;
+package com.quail.face.activity;
 
 import android.hardware.Camera;
 import android.os.Bundle;
@@ -8,6 +8,9 @@ import android.widget.Button;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Window;
+import com.quail.face.CameraPreview;
+import com.quail.face.R;
+import com.quail.face.ShutterHandler;
 
 public class TakeActivity extends SherlockFragmentActivity
 {
@@ -32,6 +35,7 @@ public class TakeActivity extends SherlockFragmentActivity
         int id = getIntent().getIntExtra(PERSON_ID_KEY, 0);
 
         cameraPreview = (CameraPreview) findViewById(R.id.cameraPreview);
+        cameraPreview.setBackgroundResource(R.drawable.bg);
         shutterHandler = new ShutterHandler(this, id);
         ((Button) findViewById(R.id.takeButton))
                 .setOnClickListener(shutterHandler);

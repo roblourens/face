@@ -30,7 +30,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".TakeActivity"
+            android:name=".activity.TakeActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Sherlock" >

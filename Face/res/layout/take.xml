@@ -4,6 +4,7 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
+    <!-- Top of the screen, closest to the camera -->
     <com.quail.face.CameraPreview
         android:id="@+id/cameraPreview"
         android:layout_width="wrap_content"

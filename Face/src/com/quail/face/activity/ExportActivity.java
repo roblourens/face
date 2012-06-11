@@ -1,4 +1,4 @@
-package com.quail.face;
+package com.quail.face.activity;
 
 import java.io.File;
 
@@ -20,7 +20,12 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockActivity;
+import com.quail.face.FaceApplication;
+import com.quail.face.ImageFileManager;
+import com.quail.face.ListenerVideoView;
 import com.quail.face.ListenerVideoView.PlayListener;
+import com.quail.face.PrefsManager;
+import com.quail.face.R;
 
 public class ExportActivity extends SherlockActivity implements
         OnSeekBarChangeListener

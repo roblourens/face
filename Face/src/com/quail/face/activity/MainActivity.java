@@ -1,4 +1,4 @@
-package com.quail.face;
+package com.quail.face.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +11,11 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
+import com.quail.face.FaceApplication;
+import com.quail.face.GridItemListener;
+import com.quail.face.ImageAdapter;
+import com.quail.face.ImageFileManager;
+import com.quail.face.R;
 
 public class MainActivity extends SherlockActivity
 {
