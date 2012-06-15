@@ -7,8 +7,12 @@ import android.content.SharedPreferences.Editor;
 public class PrefsManager
 {
     private static final String PREFS_NAME = "com.quail.face.Prefs";
+    
     private static final String LAST_PERSON_KEY = "last_person";
     private static final String LAST_RATE_KEY = "last_rate";
+    
+    private static final String SHUTTER_SOUND_KEY = "shutter_sound";
+    private static final String ADD_TO_GALLERY_KEY = "add_to_gallery";
 
     private Context c;
 
@@ -51,6 +55,19 @@ public class PrefsManager
         SharedPreferences settings = getPrefs();
         Editor editor = settings.edit();
         editor.putInt(LAST_RATE_KEY, lastRate);
+        return editor.commit();
+    }
+    
+    public boolean makeShutterSound()
+    {
+        return getPrefs().getBoolean(SHUTTER_SOUND_KEY, false);
+    }
+    
+    public boolean setShutterSound(boolean makeSound)
+    {
+        SharedPreferences settings = getPrefs();
+        Editor editor = settings.edit();
+        editor.putBoolean(LAST_RATE_KEY, makeSound);
         return editor.commit();
     }
 

@@ -1,7 +1,10 @@
 package com.quail.face;
 
 import android.app.Activity;
+import android.content.Context;
 import android.hardware.Camera;
+import android.hardware.Camera.ShutterCallback;
+import android.media.AudioManager;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -12,12 +15,15 @@ public class ShutterHandler implements OnClickListener, Camera.ShutterCallback,
 {
     private Activity a;
     private Camera camera;
+    private PrefsManager pm;
     private int id;
 
     public ShutterHandler(Activity a, int id)
     {
         this.a = a;
         this.id = id;
+
+        pm = ((FaceApplication) a.getApplication()).getPrefsManager();
     }
 
     public void setCamera(Camera camera)
@@ -29,7 +35,10 @@ public class ShutterHandler implements OnClickListener, Camera.ShutterCallback,
     public void onClick(View v)
     {
         if (camera != null)
-            camera.takePicture(this, null, this);
+        {
+            Camera.ShutterCallback sc = pm.makeShutterSound() ? this : null;
+            camera.takePicture(sc, null, this);
+        }
         else
             log("null camera");
     }
