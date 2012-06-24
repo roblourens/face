@@ -105,7 +105,7 @@ public class MainActivity extends SherlockActivity
         }
         else if (item.getItemId() == R.id.menu_prefs)
         {
-
+            startActivity(new Intent(this, SettingsActivity.class));
         }
         else if (item.getItemId() == NEW_PERSON_ID)
         {

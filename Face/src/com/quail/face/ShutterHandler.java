@@ -1,10 +1,7 @@
 package com.quail.face;
 
 import android.app.Activity;
-import android.content.Context;
 import android.hardware.Camera;
-import android.hardware.Camera.ShutterCallback;
-import android.media.AudioManager;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;

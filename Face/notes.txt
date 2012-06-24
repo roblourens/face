@@ -8,3 +8,8 @@ If SD card is present:
         images can be deleted from the gallery independently from the app images
 Else:
     fail
+    
+Settings
+    Make shutter sound
+    Add pictures to gallery
+    Reminders

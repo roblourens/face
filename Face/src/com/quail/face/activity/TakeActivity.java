@@ -6,13 +6,13 @@ import android.util.Log;
 import android.view.WindowManager;
 import android.widget.Button;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Window;
 import com.quail.face.CameraPreview;
 import com.quail.face.R;
 import com.quail.face.ShutterHandler;
 
-public class TakeActivity extends SherlockFragmentActivity
+public class TakeActivity extends SherlockActivity
 {
     private CameraPreview cameraPreview;
     private ShutterHandler shutterHandler;
