@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <color name="export_button_normal">#32CD32</color>
     <color name="export_button_pressed">#009900</color>
-    
+    <color name="ampm_off">#ff404040</color>
+    <color name="ampm_on">#ffffffff</color>
+
 </resources>

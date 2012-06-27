@@ -53,6 +53,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Sherlock" >
         </activity>
+        <receiver android:name="OnAlarmReceiver"></receiver>
     </application>
 
 </manifest>

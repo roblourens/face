@@ -6,6 +6,7 @@
         android:title="Make shutter sound" />
     <CheckBoxPreference
         android:key="camera_roll"
-        android:title="Add new pictures to camera roll" />
+        android:summary="Add new pictures to the camera roll"
+        android:title="Camera roll" />
 
 </PreferenceScreen>

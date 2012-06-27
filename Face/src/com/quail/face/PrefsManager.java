@@ -7,10 +7,11 @@ import android.preference.PreferenceManager;
 
 public class PrefsManager
 {
-    private static final String PREFS_NAME = "com.quail.face.Prefs";
-
     private static final String LAST_PERSON_KEY = "last_person";
     private static final String LAST_RATE_KEY = "last_rate";
+    private static final String REMINDER_HOUR_KEY = "reminder_hour";
+    private static final String REMINDER_MIN_KEY = "reminder_min";
+    private static final String REMINDER_KEY = "reminder";
 
     // same as used in xml.prefs
     public static final String SHUTTER_SOUND_KEY = "shutter_sound";
@@ -39,8 +40,7 @@ public class PrefsManager
      */
     public boolean setLastPerson(int lastId)
     {
-        SharedPreferences settings = getPrefs();
-        Editor editor = settings.edit();
+        Editor editor = getEditor();
         editor.putInt(LAST_PERSON_KEY, lastId);
         return editor.commit();
     }
@@ -54,8 +54,7 @@ public class PrefsManager
 
     public boolean setLastRate(int lastRate)
     {
-        SharedPreferences settings = getPrefs();
-        Editor editor = settings.edit();
+        Editor editor = getEditor();
         editor.putInt(LAST_RATE_KEY, lastRate);
         return editor.commit();
     }
@@ -67,14 +66,54 @@ public class PrefsManager
 
     public boolean setShutterSound(boolean makeSound)
     {
-        SharedPreferences settings = getPrefs();
-        Editor editor = settings.edit();
+        Editor editor = getEditor();
         editor.putBoolean(LAST_RATE_KEY, makeSound);
+        return editor.commit();
+    }
+    
+    public boolean getReminderEnabled()
+    {
+        return getPrefs().getBoolean(REMINDER_KEY, false);
+    }
+    
+    public boolean setReminderEnabled(boolean reminderEnabled)
+    {
+        Editor editor = getEditor();
+        editor.putBoolean(REMINDER_KEY, reminderEnabled);
+        return editor.commit();
+    }
+
+    public int getReminderHour()
+    {
+        return getPrefs().getInt(REMINDER_HOUR_KEY, 12);
+    }
+
+    public boolean setReminderHour(int hour)
+    {
+        Editor editor = getEditor();
+        editor.putInt(REMINDER_HOUR_KEY, hour);
+        return editor.commit();
+    }
+
+    public int getReminderMin()
+    {
+        return getPrefs().getInt(REMINDER_MIN_KEY, 30);
+    }
+
+    public boolean setReminderMin(int min)
+    {
+        Editor editor = getEditor();
+        editor.putInt(REMINDER_MIN_KEY, min);
         return editor.commit();
     }
 
     private SharedPreferences getPrefs()
     {
         return PreferenceManager.getDefaultSharedPreferences(c);
+    }
+
+    private Editor getEditor()
+    {
+        return getPrefs().edit();
     }
 }
