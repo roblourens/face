@@ -2,12 +2,13 @@ package com.quail.face.activity;
 
 import java.util.Calendar;
 
-import android.app.Dialog;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.app.TimePickerDialog.OnTimeSetListener;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ import android.widget.TimePicker;
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.android.alarmclock.DigitalClock;
 import com.quail.face.FaceApplication;
+import com.quail.face.OnAlarmReceiver;
 import com.quail.face.PrefsManager;
 import com.quail.face.R;
 
@@ -48,8 +50,6 @@ public class SettingsActivity extends SherlockPreferenceActivity
             public void onItemClick(AdapterView<?> l, View arg1v, int position,
                     long id)
             {
-                log("time clicked");
-
                 OnTimeSetListener timeSetListener = new OnTimeSetListener()
                 {
                     @Override
@@ -60,6 +60,9 @@ public class SettingsActivity extends SherlockPreferenceActivity
                         pm.setReminderHour(hourOfDay);
                         pm.setReminderMin(minute);
                         syncClockText();
+
+                        if (pm.getReminderEnabled())
+                            scheduleNotification();
                     }
                 };
                 TimePickerDialog dialog = new TimePickerDialog(
@@ -68,6 +71,35 @@ public class SettingsActivity extends SherlockPreferenceActivity
                 dialog.show();
             }
         });
+    }
+
+    private void scheduleNotification()
+    {
+        AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        PendingIntent contentIntent = getNotificationIntent();
+
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.HOUR_OF_DAY, pm.getReminderHour());
+        c.set(Calendar.MINUTE, pm.getReminderMin());
+        c.set(Calendar.SECOND, 0);
+
+        long dayMillis = 24 * 60 * 60 * 1000;
+        log("Set alarm for " + c.getTimeInMillis() + " with interval "
+                + dayMillis);
+        am.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), dayMillis,
+                contentIntent);
+    }
+
+    private void cancelNotification()
+    {
+        AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        am.cancel(getNotificationIntent());
+    }
+
+    private PendingIntent getNotificationIntent()
+    {
+        Intent notificationIntent = new Intent(this, OnAlarmReceiver.class);
+        return PendingIntent.getBroadcast(this, 0, notificationIntent, 0);
     }
 
     private void syncClockText()
@@ -125,6 +157,11 @@ public class SettingsActivity extends SherlockPreferenceActivity
                         boolean isChecked)
                 {
                     pm.setReminderEnabled(isChecked);
+
+                    if (isChecked)
+                        scheduleNotification();
+                    else
+                        cancelNotification();
                 }
             });
 
